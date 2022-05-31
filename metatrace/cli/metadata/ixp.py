@@ -6,7 +6,7 @@ from pint import UnitRegistry
 from rich.console import Console
 from rich.table import Table
 
-from metatrace.clickhouse import drop_dict, drop_table, insert_into, list_tables
+from metatrace.lib.clickhouse import drop_dict, drop_table, insert_into, list_tables
 from metatrace.lib.metadata.ixp import MetadataIXPSource, create_metadata_ixp
 
 app = typer.Typer()

@@ -4,7 +4,7 @@ import typer
 from pych_client import ClickHouseClient
 
 from metatrace.cli import metadata
-from metatrace.cli.credentials import get_credentials
+from metatrace.lib.credentials import get_credentials
 
 app = typer.Typer()
 app.add_typer(metadata.app, name="metadata")

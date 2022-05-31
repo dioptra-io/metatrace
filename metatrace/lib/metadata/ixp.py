@@ -4,7 +4,7 @@ from enum import Enum
 
 from pych_client import ClickHouseClient
 
-from metatrace.clickhouse import create_dict, create_table
+from metatrace.lib.clickhouse import create_dict, create_table
 
 
 class MetadataIXPSource(Enum):
