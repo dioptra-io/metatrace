@@ -261,6 +261,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "pyasn"
+version = "1.6.1"
+description = "Offline IP address to Autonomous System Number lookup module."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pych-client"
 version = "0.2.10"
 description = "A ClickHouse client for Python, with a command-line interface."
@@ -490,7 +498,7 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "a2c5382520813ae8550b5d5c9ecffe227cfc0f7b5c0aab978d7f465749890661"
+content-hash = "ae202a00a3d4749fd5ffef16c5bd3ae82d473cbc824e4ad824ab11aeb9972e11"
 
 [metadata.files]
 anyio = [
@@ -695,6 +703,9 @@ py-radix = [
     {file = "py_radix-0.10.0-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:c36ef71ec45eb586afc9431dbb51aebfe73caf5940b381bdcd96ef76d13aa787"},
     {file = "py_radix-0.10.0-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:48f1d341328cf69479343ef75dc06939dd50e507b0c1d5e985ffe8fec797d1c6"},
     {file = "py_radix-0.10.0-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:0c4956f6489bed71798a68f2e9217037a8631a2b057b42484a5833b013f2415c"},
+]
+pyasn = [
+    {file = "pyasn-1.6.1.tar.gz", hash = "sha256:e942b54916363ec7b8b70eaeaecd0eb4e41ef1bcf4a2397b29a6d715fccdf925"},
 ]
 pych-client = [
     {file = "pych-client-0.2.10.tar.gz", hash = "sha256:28828c26942986806bf1b37bee1ad85c1ce66863376302dff185c2c9d3cbfc7c"},

@@ -66,4 +66,4 @@ def query(ctx: typer.Context, slug: str, address: str):
     res = ctx.obj["client"].text(
         query, {"name": f"metadata_dict_ixp_{slug}", "col": "ixp", "val": address}
     )
-    print(res)
+    typer.echo(res)
