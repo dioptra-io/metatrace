@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple
 
+from metatrace.lib.logger import logger
+
 CREDENTIALS_FILE = Path.home() / ".config" / "metatrace" / "credentials.json"
 
 BASE_URL_ENV = "METATRACE_BASE_URL"
@@ -23,7 +25,7 @@ def get_credentials(
     password: Optional[str],
 ) -> Tuple[str, str, str, str]:
     if base_url or database or username or password:
-        # logger.debug("using credentials from arguments")
+        logger.debug("using credentials from arguments")
         return (
             base_url or DEFAULT_BASE_URL,
             database or DEFAULT_DATABASE,
@@ -36,7 +38,7 @@ def get_credentials(
         or USERNAME_ENV in os.environ
         or PASSWORD_ENV in os.environ
     ):
-        # logger.debug("using credentials from environment")
+        logger.debug("using credentials from environment")
         return (
             os.environ.get(BASE_URL_ENV, DEFAULT_BASE_URL),
             os.environ.get(DATABASE_ENV, DEFAULT_DATABASE),
@@ -44,7 +46,7 @@ def get_credentials(
             os.environ.get(PASSWORD_ENV, DEFAULT_PASSWORD),
         )
     if CREDENTIALS_FILE.exists():
-        # logger.debug("using credentials from %s", CREDENTIALS_FILE)
+        logger.debug("using credentials from %s", CREDENTIALS_FILE)
         credentials = json.loads(CREDENTIALS_FILE.read_text())
         return (
             credentials.get("base_url", DEFAULT_BASE_URL),

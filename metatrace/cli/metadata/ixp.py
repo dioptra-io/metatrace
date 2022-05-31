@@ -35,8 +35,8 @@ def remove(ctx: typer.Context, slug: list[str]):
         drop_table(ctx.obj["client"], f"metadata_table_ixp_{slug_}")
 
 
-@app.command()
-def list(ctx: typer.Context):
+@app.command("list")
+def list_(ctx: typer.Context):
     ureg = UnitRegistry()
     table = Table()
     table.add_column("Slug")
