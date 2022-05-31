@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "metatrace"
+version = "0.1.0"
+description = ""
+authors = [
+    "Maxime Mouchet <maxime.mouchet@lip6.fr>",
+    "Matthieu Gouel <matthieu.gouel@lip6.fr>",
+    "Kevin Vermeulen <kevin.vermeulen@cnrs.fr>",
+]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pych-client = "^0.2.10"
+typer = "^0.4.1"
+rich = "^12.4.4"
+fetchmesh = "^0.3.3"
+Pint = "^0.19.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
