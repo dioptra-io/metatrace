@@ -39,7 +39,7 @@ def create_table(
     columns: list[tuple[str, str]],
     order_by: list[str] | str,
     attributes: dict | None = None,
-):
+) -> None:
     if isinstance(order_by, str):
         order_by = [order_by]
     comment = json.dumps(attributes or {})
@@ -52,15 +52,15 @@ def create_table(
     client.execute(query)
 
 
-def drop_dict(client: ClickHouseClient, name: str):
+def drop_dict(client: ClickHouseClient, name: str) -> None:
     client.execute("DROP DICTIONARY {name:Identifier}", {"name": name})
 
 
-def drop_table(client: ClickHouseClient, name: str):
+def drop_table(client: ClickHouseClient, name: str) -> None:
     client.execute("DROP TABLE {name:Identifier}", {"name": name})
 
 
-def insert_into(client: ClickHouseClient, name: str, rows: list[dict]):
+def insert_into(client: ClickHouseClient, name: str, rows: list[dict]) -> None:
     data = (json.dumps(row).encode() for row in rows)
     client.execute(
         "INSERT INTO {name:Identifier} FORMAT JSONEachRow",
@@ -69,7 +69,7 @@ def insert_into(client: ClickHouseClient, name: str, rows: list[dict]):
     )
 
 
-def list_tables(client: ClickHouseClient, prefix: str):
+def list_tables(client: ClickHouseClient, prefix: str) -> list[dict]:
     query = """
     SELECT
         name,
@@ -85,7 +85,7 @@ def list_tables(client: ClickHouseClient, prefix: str):
     return rows
 
 
-def table_exists(client: ClickHouseClient, table: str):
+def table_exists(client: ClickHouseClient, table: str) -> bool:
     query = """
     SELECT COUNT() == 1
     FROM system.tables

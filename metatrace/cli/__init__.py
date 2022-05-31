@@ -23,7 +23,7 @@ class LogLevel(Enum):
     Critical = "CRITICAL"
 
 
-def version_callback(value: bool):
+def version_callback(value: bool) -> None:
     if value:
         typer.echo(f"metatrace {__version__}")
         raise typer.Exit()
@@ -43,7 +43,7 @@ def main(
         callback=version_callback,
         help="Print program version.",
     ),
-):
+) -> None:
     if log_level:
         logging.basicConfig(
             format="%(message)s",

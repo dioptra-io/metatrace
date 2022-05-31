@@ -16,7 +16,7 @@ app = typer.Typer()
 def add(
     ctx: typer.Context,
     source: MetadataIXPSource = typer.Option(MetadataIXPSource.PeeringDB.value),
-):
+) -> None:
     table_name, dict_name = create_metadata_ixp(ctx.obj["client"], source)
     rows = []
     match source:
@@ -29,14 +29,14 @@ def add(
 
 
 @app.command()
-def remove(ctx: typer.Context, slug: list[str]):
+def remove(ctx: typer.Context, slug: list[str]) -> None:
     for slug_ in slug:
         drop_dict(ctx.obj["client"], f"metadata_dict_ixp_{slug_}")
         drop_table(ctx.obj["client"], f"metadata_table_ixp_{slug_}")
 
 
 @app.command("list")
-def list_(ctx: typer.Context):
+def list_(ctx: typer.Context) -> None:
     ureg = UnitRegistry()
     table = Table()
     table.add_column("Slug")
@@ -59,7 +59,7 @@ def list_(ctx: typer.Context):
 
 
 @app.command()
-def query(ctx: typer.Context, slug: str, address: str):
+def query(ctx: typer.Context, slug: str, address: str) -> None:
     query = """
     SELECT dictGetString({name:String}, {col:String}, toIPv6({val:String}))
     """

@@ -20,7 +20,7 @@ def add(
     date: datetime = typer.Option(datetime(2022, 1, 1)),
     print_progress: bool = True,
     skip_record_on_error: bool = False,
-):
+) -> None:
     collector_ = Collector.from_fqdn(collector)
     table_name, dict_name = create_metadata_asn(ctx.obj["client"], collector_, date)
     typer.echo("Downloading RIB...")
@@ -35,14 +35,14 @@ def add(
 
 
 @app.command()
-def remove(ctx: typer.Context, slug: list[str]):
+def remove(ctx: typer.Context, slug: list[str]) -> None:
     for slug_ in slug:
         drop_dict(ctx.obj["client"], f"metadata_dict_asn_{slug_}")
         drop_table(ctx.obj["client"], f"metadata_table_asn_{slug_}")
 
 
 @app.command("list")
-def list_(ctx: typer.Context):
+def list_(ctx: typer.Context) -> None:
     ureg = UnitRegistry()
     table = Table()
     table.add_column("Slug")
@@ -67,7 +67,7 @@ def list_(ctx: typer.Context):
 
 
 @app.command()
-def query(ctx: typer.Context, slug: str, address: str):
+def query(ctx: typer.Context, slug: str, address: str) -> None:
     query = """
     SELECT dictGetUInt32({name:String}, {col:String}, toIPv6({val:String}))
     """

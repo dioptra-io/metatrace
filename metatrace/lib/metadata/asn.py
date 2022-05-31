@@ -7,7 +7,9 @@ from pych_client import ClickHouseClient
 from metatrace.lib.clickhouse import create_dict, create_table
 
 
-def create_metadata_asn(client: ClickHouseClient, collector: Collector, date: datetime):
+def create_metadata_asn(
+    client: ClickHouseClient, collector: Collector, date: datetime
+) -> tuple[str, str]:
     h = random.getrandbits(16)
     created_at = datetime.now()
     slug = f"{created_at:%Y%m%d%H%M}_{h:04x}"

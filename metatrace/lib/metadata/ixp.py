@@ -11,7 +11,9 @@ class MetadataIXPSource(Enum):
     PeeringDB = "peeringdb"
 
 
-def create_metadata_ixp(client: ClickHouseClient, source: MetadataIXPSource):
+def create_metadata_ixp(
+    client: ClickHouseClient, source: MetadataIXPSource
+) -> tuple[str, str]:
     h = random.getrandbits(16)
     created_at = datetime.now()
     slug = f"{created_at:%Y%m%d%H%M}_{h:04x}"
