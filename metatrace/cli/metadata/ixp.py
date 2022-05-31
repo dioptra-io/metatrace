@@ -1,13 +1,18 @@
 from datetime import datetime
 
 import typer
-from fetchmesh.peeringdb import PeeringDB
 from pint import UnitRegistry
 from rich.console import Console
 from rich.table import Table
 
-from metatrace.lib.clickhouse import drop_dict, drop_table, insert_into, list_tables
-from metatrace.lib.metadata.ixp import MetadataIXPSource, create_metadata_ixp
+from metatrace.lib.metadata.ixp import (
+    MetadataIXPSource,
+    create_ixp_metadata,
+    drop_ixp_metadata,
+    insert_ixp_metadata,
+    list_ixp_metadata,
+    query_ixp_metadata,
+)
 
 app = typer.Typer()
 
@@ -17,22 +22,14 @@ def add(
     ctx: typer.Context,
     source: MetadataIXPSource = typer.Option(MetadataIXPSource.PeeringDB.value),
 ) -> None:
-    table_name, dict_name = create_metadata_ixp(ctx.obj["client"], source)
-    rows = []
-    match source:
-        case MetadataIXPSource.PeeringDB:
-            pdb = PeeringDB.from_api()
-            for object in pdb.objects:
-                for prefix in object.prefixes:
-                    rows.append({"prefix": prefix.prefix, "ixp": object.ix.name})
-    insert_into(ctx.obj["client"], table_name, rows)
+    slug = create_ixp_metadata(ctx.obj["client"], source)
+    insert_ixp_metadata(ctx.obj["client"], slug, source)
 
 
 @app.command()
 def remove(ctx: typer.Context, slug: list[str]) -> None:
     for slug_ in slug:
-        drop_dict(ctx.obj["client"], f"metadata_dict_ixp_{slug_}")
-        drop_table(ctx.obj["client"], f"metadata_table_ixp_{slug_}")
+        drop_ixp_metadata(ctx.obj["client"], slug_)
 
 
 @app.command("list")
@@ -44,7 +41,7 @@ def list_(ctx: typer.Context) -> None:
     table.add_column("Creation date")
     table.add_column("Rows")
     table.add_column("Size")
-    tables = list_tables(ctx.obj["client"], "metadata_table_ixp_")
+    tables = list_ixp_metadata(ctx.obj["client"])
     for t in tables:
         total_bytes = t["total_bytes"] * ureg.byte
         table.add_row(
@@ -60,10 +57,4 @@ def list_(ctx: typer.Context) -> None:
 
 @app.command()
 def query(ctx: typer.Context, slug: str, address: str) -> None:
-    query = """
-    SELECT dictGetString({name:String}, {col:String}, toIPv6({val:String}))
-    """
-    res = ctx.obj["client"].text(
-        query, {"name": f"metadata_dict_ixp_{slug}", "col": "ixp", "val": address}
-    )
-    typer.echo(res)
+    typer.echo(query_ixp_metadata(ctx.obj["client"], slug, address))

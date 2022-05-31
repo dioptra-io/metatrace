@@ -3,12 +3,16 @@ from datetime import datetime
 import typer
 from fetchmesh.bgp import Collector
 from pint import UnitRegistry
-from pyasn.mrtx import parse_mrt_file
 from rich.console import Console
 from rich.table import Table
 
-from metatrace.lib.clickhouse import drop_dict, drop_table, insert_into, list_tables
-from metatrace.lib.metadata.asn import create_metadata_asn
+from metatrace.lib.metadata.asn import (
+    create_asn_metadata,
+    drop_asn_metadata,
+    insert_asn_metadata,
+    list_asn_metadata,
+    query_asn_metadata,
+)
 
 app = typer.Typer()
 
@@ -18,27 +22,16 @@ def add(
     ctx: typer.Context,
     collector: str = typer.Option("route-views2.routeviews.org", metavar="FQDN"),
     date: datetime = typer.Option(datetime(2022, 1, 1)),
-    print_progress: bool = True,
-    skip_record_on_error: bool = False,
 ) -> None:
     collector_ = Collector.from_fqdn(collector)
-    table_name, dict_name = create_metadata_asn(ctx.obj["client"], collector_, date)
-    typer.echo("Downloading RIB...")
-    rib = collector_.download_rib(date, ".")
-    typer.echo("Parsing RIB...")
-    prefixes = parse_mrt_file(str(rib), print_progress, skip_record_on_error)
-    rows = [
-        {"prefix": prefix, "asn": asn if isinstance(asn, int) else asn.pop()}
-        for prefix, asn in prefixes.items()
-    ]
-    insert_into(ctx.obj["client"], table_name, rows)
+    slug = create_asn_metadata(ctx.obj["client"], collector_, date)
+    insert_asn_metadata(ctx.obj["client"], slug, collector_, date)
 
 
 @app.command()
 def remove(ctx: typer.Context, slug: list[str]) -> None:
     for slug_ in slug:
-        drop_dict(ctx.obj["client"], f"metadata_dict_asn_{slug_}")
-        drop_table(ctx.obj["client"], f"metadata_table_asn_{slug_}")
+        drop_asn_metadata(ctx.obj["client"], slug_)
 
 
 @app.command("list")
@@ -51,7 +44,7 @@ def list_(ctx: typer.Context) -> None:
     table.add_column("Creation date")
     table.add_column("Rows")
     table.add_column("Size")
-    tables = list_tables(ctx.obj["client"], "metadata_table_asn_")
+    tables = list_asn_metadata(ctx.obj["client"])
     for t in tables:
         total_bytes = t["total_bytes"] * ureg.byte
         table.add_row(
@@ -67,11 +60,6 @@ def list_(ctx: typer.Context) -> None:
 
 
 @app.command()
-def query(ctx: typer.Context, slug: str, address: str) -> None:
-    query = """
-    SELECT dictGetUInt32({name:String}, {col:String}, toIPv6({val:String}))
-    """
-    res = ctx.obj["client"].text(
-        query, {"name": f"metadata_dict_asn_{slug}", "col": "asn", "val": address}
-    )
-    typer.echo(res)
+def query(ctx: typer.Context, slug: str, address: list[str]) -> None:
+    for address_ in address:
+        typer.echo(query_asn_metadata(ctx.obj["client"], slug, address_))
