@@ -29,9 +29,10 @@ def add(
 
 
 @app.command()
-def remove(ctx: typer.Context, slug: str):
-    drop_dict(ctx.obj["client"], f"metadata_dict_ixp_{slug}")
-    drop_table(ctx.obj["client"], f"metadata_table_ixp_{slug}")
+def remove(ctx: typer.Context, slug: list[str]):
+    for slug_ in slug:
+        drop_dict(ctx.obj["client"], f"metadata_dict_ixp_{slug_}")
+        drop_table(ctx.obj["client"], f"metadata_table_ixp_{slug_}")
 
 
 @app.command()
