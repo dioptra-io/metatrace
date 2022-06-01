@@ -26,6 +26,8 @@ repos:
     rev: v0.960
     hooks:
       - id: mypy
+        # For some reasons mypy fails to infer some return types when run through pre-commit.
+        args: ["--no-warn-return-any"]
         additional_dependencies: [ types-all ]
         exclude: tests/
 

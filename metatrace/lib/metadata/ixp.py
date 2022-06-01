@@ -12,7 +12,7 @@ from metatrace.lib.clickhouse import (
     insert_into,
     list_tables,
 )
-from metatrace.lib.metadata.utils import dict_name, make_slug, table_name
+from metatrace.lib.naming import make_slug, metadata_dict_name, metadata_table_name
 
 
 class MetadataIXPSource(Enum):
@@ -33,18 +33,18 @@ def create_ixp_metadata(client: ClickHouseClient, source: MetadataIXPSource) -> 
     ]
     create_table(
         client,
-        table_name("ixp", slug),
+        metadata_table_name("ixp", slug),
         columns,
         "prefix",
-        attributes,
+        attributes=attributes,
     )
     create_dict(
         client,
-        dict_name("ixp", slug),
+        metadata_dict_name("ixp", slug),
         columns,
         "prefix",
-        f"SELECT * FROM {table_name('ixp', slug)}",
-        attributes,
+        f"SELECT * FROM {metadata_table_name('ixp', slug)}",
+        attributes=attributes,
     )
     return slug
 
@@ -56,23 +56,23 @@ def insert_ixp_metadata(
     match source:
         case MetadataIXPSource.PeeringDB:
             pdb = PeeringDB.from_api()
-            for object in pdb.objects:
-                for prefix in object.prefixes:
-                    rows.append({"prefix": prefix.prefix, "ixp": object.ix.name})
-    insert_into(client, table_name("ixp", slug), rows)
+            for obj in pdb.objects:
+                for prefix in obj.prefixes:
+                    rows.append({"prefix": prefix.prefix, "ixp": obj.ix.name})
+    insert_into(client, metadata_table_name("ixp", slug), rows)
 
 
 def drop_ixp_metadata(client: ClickHouseClient, slug: str) -> None:
-    drop_dict(client, dict_name("ixp", slug))
-    drop_table(client, table_name("ixp", slug))
+    drop_dict(client, metadata_dict_name("ixp", slug))
+    drop_table(client, metadata_table_name("ixp", slug))
 
 
 def list_ixp_metadata(client: ClickHouseClient) -> list[dict]:
-    return list_tables(client, table_name("ixp", ""))
+    return list_tables(client, metadata_table_name("ixp", ""))
 
 
 def query_ixp_metadata(client: ClickHouseClient, slug: str, address: str) -> str:
     query = "SELECT dictGetString({name:String}, {col:String}, toIPv6({val:String}))"
     return client.text(
-        query, {"name": dict_name("ixp", slug), "col": "ixp", "val": address}
+        query, {"name": metadata_dict_name("ixp", slug), "col": "ixp", "val": address}
     )

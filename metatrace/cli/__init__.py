@@ -7,10 +7,11 @@ from pych_client import ClickHouseClient
 from rich.logging import RichHandler
 
 from metatrace import __version__
-from metatrace.cli import metadata
+from metatrace.cli import data, metadata
 from metatrace.lib.credentials import get_credentials
 
 app = typer.Typer()
+app.add_typer(data.app, name="data")
 app.add_typer(metadata.app, name="metadata")
 
 

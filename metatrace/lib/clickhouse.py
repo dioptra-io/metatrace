@@ -1,14 +1,15 @@
 import json
+from collections.abc import Sequence
 
 from pych_client import ClickHouseClient
 
 
-def make_schema(columns: list[tuple[str, str]]) -> str:
+def make_schema(columns: Sequence[tuple[str, ...]]) -> str:
     """
-    >>> make_schema([("a", "UInt8"), ("b", "String")])
-    'a UInt8, b String'
+    >>> make_schema([("a", "UInt8"), ("b", "String", "CODEC(T64, ZSTD(1))")])
+    'a UInt8, b String CODEC(T64, ZSTD(1))'
     """
-    return ", ".join(f"{x} {y}" for x, y in columns)
+    return ", ".join(" ".join(x) for x in columns)
 
 
 # As of v22.6.1 ClickHouse does not support parameter interpolation
@@ -16,9 +17,10 @@ def make_schema(columns: list[tuple[str, str]]) -> str:
 def create_dict(
     client: ClickHouseClient,
     name: str,
-    columns: list[tuple[str, str]],
+    columns: Sequence[tuple[str, ...]],
     primary_key: str,
     query: str,
+    *,
     attributes: dict | None = None,
 ) -> None:
     comment = json.dumps(attributes or {})
@@ -36,16 +38,21 @@ def create_dict(
 def create_table(
     client: ClickHouseClient,
     name: str,
-    columns: list[tuple[str, str]],
-    order_by: list[str] | str,
+    columns: Sequence[tuple[str, ...]],
+    order_by: Sequence[str] | str,
+    *,
     attributes: dict | None = None,
+    settings: dict | None = None,
+    partition_by: str | None = None,
 ) -> None:
     if isinstance(order_by, str):
         order_by = [order_by]
     comment = json.dumps(attributes or {})
+    partition = f"PARTITION BY {partition_by}" if partition_by else ""
     query = f"""
     CREATE TABLE {name} ({make_schema(columns)})
     ENGINE = MergeTree
+    {partition}
     ORDER BY ({', '.join(order_by)})
     COMMENT '{comment}'
     """
@@ -77,9 +84,9 @@ def list_tables(client: ClickHouseClient, prefix: str) -> list[dict]:
         total_bytes,
         total_rows
     FROM system.tables
-    WHERE startsWith(name, {prefix:String})
+    WHERE database = {database:String} AND startsWith(name, {prefix:String})
     """
-    rows = client.json(query, {"prefix": prefix})
+    rows = client.json(query, {"database": client.config["database"], "prefix": prefix})
     for row in rows:
         row["attributes"] = json.loads(row["attributes"])
     return rows

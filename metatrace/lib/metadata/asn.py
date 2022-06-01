@@ -13,7 +13,7 @@ from metatrace.lib.clickhouse import (
     list_tables,
 )
 from metatrace.lib.logger import logger
-from metatrace.lib.metadata.utils import dict_name, make_slug, table_name
+from metatrace.lib.naming import make_slug, metadata_dict_name, metadata_table_name
 
 
 def create_asn_metadata(
@@ -33,18 +33,18 @@ def create_asn_metadata(
     ]
     create_table(
         client,
-        table_name("asn", slug),
+        metadata_table_name("asn", slug),
         columns,
         "prefix",
-        attributes,
+        attributes=attributes,
     )
     create_dict(
         client,
-        dict_name("asn", slug),
+        metadata_dict_name("asn", slug),
         columns,
         "prefix",
-        f"SELECT * FROM {table_name('asn', slug)}",
-        attributes,
+        f"SELECT * FROM {metadata_table_name('asn', slug)}",
+        attributes=attributes,
     )
     return slug
 
@@ -60,20 +60,20 @@ def insert_asn_metadata(
         {"prefix": prefix, "asn": asn if isinstance(asn, int) else asn.pop()}
         for prefix, asn in prefixes.items()
     ]
-    insert_into(client, table_name("asn", slug), rows)
+    insert_into(client, metadata_table_name("asn", slug), rows)
 
 
 def drop_asn_metadata(client: ClickHouseClient, slug: str) -> None:
-    drop_dict(client, dict_name("asn", slug))
-    drop_table(client, table_name("asn", slug))
+    drop_dict(client, metadata_dict_name("asn", slug))
+    drop_table(client, metadata_table_name("asn", slug))
 
 
 def list_asn_metadata(client: ClickHouseClient) -> list[dict]:
-    return list_tables(client, table_name("asn", ""))
+    return list_tables(client, metadata_table_name("asn", ""))
 
 
 def query_asn_metadata(client: ClickHouseClient, slug: str, address: str) -> str:
     query = "SELECT dictGetUInt32({name:String}, {col:String}, toIPv6({val:String}))"
     return client.text(
-        query, {"name": dict_name("asn", slug), "col": "asn", "val": address}
+        query, {"name": metadata_dict_name("asn", slug), "col": "asn", "val": address}
     )
