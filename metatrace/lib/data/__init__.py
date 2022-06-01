@@ -66,13 +66,13 @@ def create_data(
         ),
         (
             "PROJECTION",
-            "asn_proj",
-            "(SELECT probe_src_addr, probe_dst_addr, asn ORDER BY asn)",
+            "reply_asn_proj",
+            "(SELECT probe_src_addr, probe_dst_addr, reply_asn ORDER BY reply_asn)",
         ),
         (
             "PROJECTION",
-            "ixp_proj",
-            "(SELECT probe_src_addr, probe_dst_addr, ixp ORDER BY ixp)",
+            "reply_ixp_proj",
+            "(SELECT probe_src_addr, probe_dst_addr, reply_ixp ORDER BY reply_ixp)",
         ),
     ]
     order_by = [

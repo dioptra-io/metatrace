@@ -30,3 +30,13 @@ metatrace metadata ixp query 202205312134_6cf2 2001:7f8:1::1
 # AMS-IX
 metatrace metadata ixp remove 202205312134_6cf2
 ```
+
+```bash
+metatrace data init --asn-metadata-slug 202205312208_1f59 --ixp-metadata-slug 202205312134_6cf2
+metatrace data list
+# ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━┓
+# ┃ Slug              ┃ Source ┃ Creation date            ┃ Rows ┃ Size ┃
+# ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━┩
+# │ 202206011116_a93b │ ark    │ Wed Jun  1 11:16:24 2022 │ 0    │ 0 B  │
+# └───────────────────┴────────┴──────────────────────────┴──────┴──────┘
+```
