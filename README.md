@@ -71,7 +71,7 @@ WHERE reply_ixp = 'AMS-IX'
 
 (TODO: Insert maxmind)
 
-### Traceroutes going through multiple ASNs (or IXPs)
+### Traceroutes going through multiple ASNs (or IXPs, countries...)
 
 ```sql
 WITH groupArray(reply_asn) AS asns
