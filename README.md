@@ -87,3 +87,33 @@ GROUP BY
 HAVING hasAll(asns, [3356, 15169])
 SETTINGS optimize_aggregation_in_order = 1
 ```
+
+### AS-PATH
+
+```sql
+WITH
+    groupArray((traceroute_start, probe_ttl, reply_asn)) AS replies,
+    -- Build a map (traceroute_start, probe_ttl) -> reply_asn 
+    arrayMap(x -> cityHash64(x.1, x.2), replies) AS keys,
+    arrayMap(x -> x.3, replies) AS values,
+    CAST((keys, values), 'Map(UInt64, UInt32)') AS map,
+    -- Find the distinct traceroute_start values
+    arrayDistinct(arrayMap(x -> x.1, replies)) AS starts,
+    -- Find the distinct probe_ttl values
+    arrayDistinct(arrayMap(x -> x.2, replies)) AS ttls,
+    -- Find the min/max probe_ttl values in order to produce sorted results
+    arrayMin(ttls) AS min_ttl,
+    arrayMax(ttls) AS max_ttl,
+    -- Build the paths
+    arrayMap(start -> (start, arrayMap(ttl -> (ttl, map[cityHash64(start, ttl)]), range(min_ttl, max_ttl))), starts) AS paths,
+    -- Optional, to get one line per path
+    arrayJoin(paths) AS path
+SELECT
+    agent_id,
+    probe_dst_addr,
+    path.1 AS timestamp,
+    path.2 AS as_path
+FROM data_202206021549_11e3
+GROUP BY agent_id, probe_dst_addr
+SETTINGS optimize_aggregation_in_order = 1
+```
