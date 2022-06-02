@@ -2,6 +2,7 @@ import json
 from collections.abc import Sequence
 
 from pych_client import ClickHouseClient
+from rich.progress import track
 
 
 def make_schema(columns: Sequence[tuple[str, ...]]) -> str:
@@ -21,12 +22,12 @@ def create_dict(
     primary_key: str,
     query: str,
     *,
-    attributes: dict | None = None,
+    info: dict | None = None,
 ) -> None:
     user = client.config["username"]
     password = client.config["password"]
     database = client.config["database"]
-    comment = json.dumps(attributes or {})
+    comment = json.dumps(info or {})
     query = f"""
     CREATE DICTIONARY {name} ({make_schema(columns)})
     PRIMARY KEY {primary_key}
@@ -49,13 +50,13 @@ def create_table(
     columns: Sequence[tuple[str, ...]],
     order_by: Sequence[str] | str,
     *,
-    attributes: dict | None = None,
+    info: dict | None = None,
     settings: dict | None = None,
     partition_by: str | None = None,
 ) -> None:
     if isinstance(order_by, str):
         order_by = [order_by]
-    comment = json.dumps(attributes or {})
+    comment = json.dumps(info or {})
     partition = f"PARTITION BY {partition_by}" if partition_by else ""
     query = f"""
     CREATE TABLE {name} ({make_schema(columns)})
@@ -80,7 +81,7 @@ def insert_into(client: ClickHouseClient, name: str, rows: list[dict]) -> None:
     client.execute(
         "INSERT INTO {name:Identifier} FORMAT JSONEachRow",
         params={"name": name},
-        data=data,
+        data=track(data, description=f"INSERT INTO {name}", total=len(rows)),
     )
 
 

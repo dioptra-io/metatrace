@@ -4,7 +4,7 @@ from enum import Enum
 from pych_client import ClickHouseClient
 
 from metatrace.lib.clickhouse import create_table, drop_table, list_tables
-from metatrace.lib.naming import data_table_name, make_slug, metadata_dict_name
+from metatrace.lib.naming import data_table_name, make_slug
 
 
 class DataSource(Enum):
@@ -54,18 +54,18 @@ def create_data(
             "MATERIALIZED",
             "toIPv6(cutIPv6(reply_src_addr, 8, 1))",
         ),
-        (
-            "reply_asn",
-            "UInt32",
-            "MATERIALIZED",
-            f"dictGetUInt32('{metadata_dict_name('asn', asn_metadata_slug)}', 'asn', reply_src_addr)",
-        ),
-        (
-            "reply_ixp",
-            "String",
-            "MATERIALIZED",
-            f"dictGetString('{metadata_dict_name('ixp', ixp_metadata_slug)}', 'ixp', reply_src_addr)",
-        ),
+        # (
+        #     "reply_asn",
+        #     "UInt32",
+        #     "MATERIALIZED",
+        #     f"dictGetUInt32('{metadata_dict_name('asn', asn_metadata_slug)}', 'asn', reply_src_addr)",
+        # ),
+        # (
+        #     "reply_ixp",
+        #     "String",
+        #     "MATERIALIZED",
+        #     f"dictGetString('{metadata_dict_name('ixp', ixp_metadata_slug)}', 'ixp', reply_src_addr)",
+        # ),
         # Projections
         (
             "PROJECTION",
@@ -93,7 +93,7 @@ def create_data(
         data_table_name(slug),
         columns,
         order_by,
-        attributes=attributes,
+        info=attributes,
         partition_by="toYYYYMM(traceroute_start)",
     )
     return slug
