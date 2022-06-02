@@ -40,3 +40,50 @@ metatrace data list
 # │ 202206011116_a93b │ ark    │ Wed Jun  1 11:16:24 2022 │ 0    │ 0 B  │
 # └───────────────────┴────────┴──────────────────────────┴──────┴──────┘
 ```
+
+## Queries
+
+(We're always assuming single-path traceroutes here)
+
+### Traceroutes going through an ASN
+
+```sql
+SELECT DISTINCT
+    agent_id,
+    probe_dst_addr,
+    traceroute_start
+FROM data_202206021549_11e3
+WHERE reply_asn = 15169
+```
+
+### Traceroutes going through an IXP
+
+```sql
+SELECT DISTINCT
+    agent_id,
+    probe_dst_addr,
+    traceroute_start
+FROM data_202206021549_11e3
+WHERE reply_ixp = 'AMS-IX'
+```
+
+### Traceroutes going through a country
+
+(TODO: Insert maxmind)
+
+### Traceroutes going through multiple ASNs (or IXPs)
+
+```sql
+WITH groupArray(reply_asn) AS asns
+SELECT
+    agent_id,
+    probe_dst_addr,
+    traceroute_start
+FROM data_202206021549_11e3
+GROUP BY
+    agent_id,
+    probe_dst_addr,
+    traceroute_start
+HAVING hasAll(asns, [3356, 15169])
+SETTINGS optimize_aggregation_in_order = 1
+```
