@@ -31,6 +31,7 @@ def create_ixp_metadata(client: ClickHouseClient, source: MetadataIXPSource) -> 
         ("prefix", "String"),
         ("ixp", "String"),
     ]
+    database = client.config["database"]
     create_table(
         client,
         metadata_table_name("ixp", slug),
@@ -43,7 +44,7 @@ def create_ixp_metadata(client: ClickHouseClient, source: MetadataIXPSource) -> 
         metadata_dict_name("ixp", slug),
         columns,
         "prefix",
-        f"SELECT * FROM {metadata_table_name('ixp', slug)}",
+        f"SELECT * FROM {database}.{metadata_table_name('ixp', slug)}",
         attributes=attributes,
     )
     return slug

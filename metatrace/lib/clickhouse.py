@@ -23,11 +23,19 @@ def create_dict(
     *,
     attributes: dict | None = None,
 ) -> None:
+    user = client.config["username"]
+    password = client.config["password"]
+    database = client.config["database"]
     comment = json.dumps(attributes or {})
     query = f"""
     CREATE DICTIONARY {name} ({make_schema(columns)})
     PRIMARY KEY {primary_key}
-    SOURCE(CLICKHOUSE(query '{query}'))
+    SOURCE(CLICKHOUSE(
+        USER '{user}'
+        PASSWORD '{password}'
+        DB '{database}'
+        QUERY '{query}'
+    ))
     LIFETIME(0)
     LAYOUT(IP_TRIE)
     COMMENT '{comment}'

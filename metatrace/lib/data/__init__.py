@@ -25,9 +25,9 @@ def create_data(
         "source": source.value,
     }
     columns = [
-        ("measurement_id", "UInt64"),
-        ("agent_id", "UInt64"),
-        ("measurement_start", "DateTime", "CODEC(T64, ZSTD(1))"),
+        ("measurement_id", "String"),
+        ("agent_id", "String"),
+        ("traceroute_start", "DateTime", "CODEC(T64, ZSTD(1))"),
         ("probe_protocol", "UInt8"),
         ("probe_src_addr", "IPv6"),
         ("probe_dst_addr", "IPv6"),
@@ -36,10 +36,18 @@ def create_data(
         ("probe_ttl", "UInt8"),
         ("reply_ttl", "UInt8"),
         ("reply_size", "UInt16"),
-        ("mpls_labels", "Array(Tuple(UInt32, UInt8, UInt8, UInt8))"),
+        ("reply_mpls_labels", "Array(Tuple(UInt32, UInt8, UInt8, UInt8))"),
         ("reply_src_addr", "IPv6"),
+        ("reply_icmp_type", "UInt8"),
+        ("reply_icmp_code", "UInt8"),
         ("rtt", "UInt16"),
         # Materialized columns
+        (
+            "probe_dst_prefix",
+            "IPv6",
+            "MATERIALIZED",
+            "toIPv6(cutIPv6(probe_src_addr, 8, 1))",
+        ),
         (
             "reply_src_prefix",
             "IPv6",
@@ -56,33 +64,29 @@ def create_data(
             "reply_ixp",
             "String",
             "MATERIALIZED",
-            f"dictGetUInt32('{metadata_dict_name('ixp', ixp_metadata_slug)}', 'ixp', reply_src_addr)",
+            f"dictGetString('{metadata_dict_name('ixp', ixp_metadata_slug)}', 'ixp', reply_src_addr)",
         ),
         # Projections
         (
             "PROJECTION",
             "reply_src_addr_proj",
-            "(SELECT probe_src_addr, probe_dst_addr, reply_src_addr ORDER BY reply_src_addr)",
+            "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_src_addr ORDER BY reply_src_addr)",
         ),
         (
             "PROJECTION",
             "reply_asn_proj",
-            "(SELECT probe_src_addr, probe_dst_addr, reply_asn ORDER BY reply_asn)",
+            "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_asn ORDER BY reply_asn)",
         ),
         (
             "PROJECTION",
             "reply_ixp_proj",
-            "(SELECT probe_src_addr, probe_dst_addr, reply_ixp ORDER BY reply_ixp)",
+            "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_ixp ORDER BY reply_ixp)",
         ),
     ]
     order_by = [
-        "reply_src_addr",
-        "probe_protocol",
-        "probe_src_addr",
+        "agent_id",
         "probe_dst_addr",
-        "probe_src_port",
-        "probe_dst_port",
-        "probe_ttl",
+        "traceroute_start",
     ]
     create_table(
         client,
@@ -90,7 +94,7 @@ def create_data(
         columns,
         order_by,
         attributes=attributes,
-        partition_by="toYYYYMM(measurement_start)",
+        partition_by="toYYYYMM(traceroute_start)",
     )
     return slug
 

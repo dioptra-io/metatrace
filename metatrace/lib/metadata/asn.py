@@ -31,6 +31,7 @@ def create_asn_metadata(
         ("prefix", "String"),
         ("asn", "UInt32"),
     ]
+    database = client.config["database"]
     create_table(
         client,
         metadata_table_name("asn", slug),
@@ -43,7 +44,7 @@ def create_asn_metadata(
         metadata_dict_name("asn", slug),
         columns,
         "prefix",
-        f"SELECT * FROM {metadata_table_name('asn', slug)}",
+        f"SELECT * FROM {database}.{metadata_table_name('asn', slug)}",
         attributes=attributes,
     )
     return slug
