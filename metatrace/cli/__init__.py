@@ -3,16 +3,45 @@ from enum import Enum
 from typing import Optional
 
 import typer
+from pint import UnitRegistry
 from pych_client import ClickHouseClient
+from rich.console import Console
 from rich.logging import RichHandler
 
 from metatrace import __version__
-from metatrace.cli import data, metadata
+from metatrace.cli import data
+from metatrace.cli.metadata.asn import ASNMetadataCLI
+from metatrace.cli.metadata.geo import GeolocationMetadataCLI
+from metatrace.cli.metadata.ixp import IXPMetadataCLI
 from metatrace.lib.credentials import get_credentials
 
-app = typer.Typer()
-app.add_typer(data.app, name="data")
-app.add_typer(metadata.app, name="metadata")
+app = typer.Typer(
+    context_settings={"max_content_width": 200},
+    epilog="""
+To get more help with metatrace, check out the documentation
+at https://github.com/dioptra-io/metatrace/
+""",
+)
+app.add_typer(
+    data.app,
+    help="Manage traceroute data",
+    name="data",
+)
+app.add_typer(
+    ASNMetadataCLI.to_typer(),
+    help="Manage AS numbers metadata",
+    name="asn",
+)
+app.add_typer(
+    GeolocationMetadataCLI.to_typer(),
+    help="Manage geolocation metadata",
+    name="geo",
+)
+app.add_typer(
+    IXPMetadataCLI.to_typer(),
+    help="Manage IXP metadata",
+    name="ixp",
+)
 
 
 class LogLevel(Enum):
@@ -51,5 +80,10 @@ def main(
             handlers=[RichHandler()],
             level=log_level.value,
         )
-    client = ClickHouseClient(*get_credentials(base_url, database, username, password))
-    ctx.obj = {"client": client}
+    ctx.obj = {
+        "client": ClickHouseClient(
+            *get_credentials(base_url, database, username, password)
+        ),
+        "console": Console(),
+        "units": UnitRegistry(),
+    }

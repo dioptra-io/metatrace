@@ -18,7 +18,9 @@ class GeolocationMetadata(Metadata):
     shortname = "geo"
 
     @classmethod
-    def insert(cls, client: ClickHouseClient, slug: str, license_key: str) -> None:
+    def insert(
+        cls, client: ClickHouseClient, identifier: str, license_key: str
+    ) -> None:
         with temporary_directory() as path:
             url = "https://download.maxmind.com/app/geoip_download"
             params = {
@@ -60,4 +62,4 @@ class GeolocationMetadata(Metadata):
                 .sort_values("prefix")
                 .to_dict("records")
             )
-        insert_into(client, cls.table_name(slug), rows)
+        insert_into(client, cls.table_name(identifier), rows)

@@ -4,7 +4,7 @@ from enum import Enum
 from pych_client import ClickHouseClient
 
 from metatrace.lib.clickhouse import create_table, drop_table, list_tables
-from metatrace.lib.naming import data_table_name, make_slug
+from metatrace.lib.naming import data_table_name, make_identifier
 
 
 class DataSource(Enum):
@@ -14,14 +14,15 @@ class DataSource(Enum):
 def create_data(
     client: ClickHouseClient,
     source: DataSource,
-    asn_metadata_slug: str,
-    ixp_metadata_slug: str,
+    asn_dict_name: str,
+    geo_dict_name: str,
+    ixp_dict_name: str,
 ) -> str:
     created_at = datetime.now()
-    slug = make_slug(created_at)
+    identifier = make_identifier("data", created_at)
     attributes = {
         "created_at": created_at.isoformat(),
-        "slug": slug,
+        "identifier": identifier,
         "source": source.value,
     }
     columns = [
@@ -54,18 +55,24 @@ def create_data(
             "MATERIALIZED",
             "toIPv6(cutIPv6(reply_src_addr, 8, 1))",
         ),
-        # (
-        #     "reply_asn",
-        #     "UInt32",
-        #     "MATERIALIZED",
-        #     f"dictGetUInt32('{metadata_dict_name('asn', asn_metadata_slug)}', 'asn', reply_src_addr)",
-        # ),
-        # (
-        #     "reply_ixp",
-        #     "String",
-        #     "MATERIALIZED",
-        #     f"dictGetString('{metadata_dict_name('ixp', ixp_metadata_slug)}', 'ixp', reply_src_addr)",
-        # ),
+        (
+            "reply_asn",
+            "UInt32",
+            "MATERIALIZED",
+            f"dictGetUInt32('{asn_dict_name}', 'asn', reply_src_addr)",
+        ),
+        (
+            "reply_country",
+            "String",
+            "MATERIALIZED",
+            f"dictGetString('{geo_dict_name}', 'country', reply_src_addr)",
+        ),
+        (
+            "reply_ixp",
+            "String",
+            "MATERIALIZED",
+            f"dictGetString('{ixp_dict_name}', 'ixp', reply_src_addr)",
+        ),
         # Projections
         (
             "PROJECTION",
@@ -76,6 +83,11 @@ def create_data(
             "PROJECTION",
             "reply_asn_proj",
             "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_asn ORDER BY reply_asn)",
+        ),
+        (
+            "PROJECTION",
+            "reply_country_proj",
+            "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_country ORDER BY reply_country)",
         ),
         (
             "PROJECTION",
@@ -90,20 +102,20 @@ def create_data(
     ]
     create_table(
         client,
-        data_table_name(slug),
+        data_table_name(identifier),
         columns,
         order_by,
         info=attributes,
         partition_by="toYYYYMM(traceroute_start)",
     )
-    return slug
+    return identifier
 
 
 # def add_data(client: ClickHouseClient, source: DataSource)
 
 
-def drop_data(client: ClickHouseClient, slug: str) -> None:
-    drop_table(client, data_table_name(slug))
+def drop_data(client: ClickHouseClient, identifier: str) -> None:
+    drop_table(client, data_table_name(identifier))
 
 
 def list_data(client: ClickHouseClient) -> list[dict]:

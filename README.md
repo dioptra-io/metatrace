@@ -9,7 +9,7 @@ poetry shell
 metatrace metadata asn add --collector route-views2.routeviews.org --date 2014-01-01T00:00:00
 metatrace metadata asn list
 # ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ Slug              ┃ Collector                   ┃ Date                     ┃ Creation date            ┃ Rows   ┃ Size                  ┃
+# ┃ Identifier              ┃ Collector                   ┃ Date                     ┃ Creation date            ┃ Rows   ┃ Size                  ┃
 # ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━┩
 # │ 202205312208_1f59 │ route-views2.routeviews.org │ Wed Jan  1 00:00:00 2014 │ Tue May 31 22:08:18 2022 │ 498110 │ 3.5454529999999997 MB │
 # └───────────────────┴─────────────────────────────┴──────────────────────────┴──────────────────────────┴────────┴───────────────────────┘
@@ -22,7 +22,7 @@ metatrace metadata asn remove 202205312208_1f59
 metatrace metadata ixp add --source peeringdb
 metatrace metadata ixp list
 # ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━┓
-# ┃ Slug              ┃ Source    ┃ Creation date            ┃ Rows ┃ Size      ┃
+# ┃ Identifier              ┃ Source    ┃ Creation date            ┃ Rows ┃ Size      ┃
 # ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━┩
 # │ 202205312134_6cf2 │ peeringdb │ Tue May 31 21:34:10 2022 │ 1952 │ 26.848 kB │
 # └───────────────────┴───────────┴──────────────────────────┴──────┴───────────┘
@@ -32,10 +32,10 @@ metatrace metadata ixp remove 202205312134_6cf2
 ```
 
 ```bash
-metatrace data init --asn-metadata-slug 202205312208_1f59 --ixp-metadata-slug 202205312134_6cf2
+metatrace data init --asn-metadata-identifier 202205312208_1f59 --ixp-metadata-identifier 202205312134_6cf2
 metatrace data list
 # ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━┓
-# ┃ Slug              ┃ Source ┃ Creation date            ┃ Rows ┃ Size ┃
+# ┃ Identifier              ┃ Source ┃ Creation date            ┃ Rows ┃ Size ┃
 # ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━┩
 # │ 202206011116_a93b │ ark    │ Wed Jun  1 11:16:24 2022 │ 0    │ 0 B  │
 # └───────────────────┴────────┴──────────────────────────┴──────┴──────┘

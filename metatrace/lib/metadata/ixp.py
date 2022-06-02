@@ -13,11 +13,11 @@ class IXPMetadataSource(Enum):
 
 class IXPMetadata(Metadata):
     attributes = {"ixp": "String"}
-    shortname = "asn"
+    shortname = "ixp"
 
     @classmethod
     def insert(
-        cls, client: ClickHouseClient, slug: str, source: IXPMetadataSource
+        cls, client: ClickHouseClient, identifier: str, source: IXPMetadataSource
     ) -> None:
         rows = []
         match source:
@@ -26,4 +26,4 @@ class IXPMetadata(Metadata):
                 for obj in pdb.objects:
                     for prefix in obj.prefixes:
                         rows.append({"prefix": prefix.prefix, "ixp": obj.ix.name})
-        insert_into(client, cls.table_name(slug), rows)
+        insert_into(client, cls.table_name(identifier), rows)

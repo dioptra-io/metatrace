@@ -11,5 +11,5 @@ class GeolocationMetadataCLI(MetadataCLI):
     def add(
         cls, ctx: typer.Context, license_key: str = typer.Option(..., metavar="KEY")
     ) -> None:
-        slug = GeolocationMetadata.create(ctx.obj["client"])
-        GeolocationMetadata.insert(ctx.obj["client"], slug, license_key)
+        identifier = GeolocationMetadata.create(ctx.obj["client"])
+        GeolocationMetadata.insert(ctx.obj["client"], identifier, license_key)

@@ -18,5 +18,5 @@ class ASNMetadataCLI(MetadataCLI):
         date: datetime = typer.Option(datetime(2022, 1, 1)),
     ) -> None:
         collector_ = Collector.from_fqdn(collector)
-        slug = ASNMetadata.create(ctx.obj["client"])  # , collector_, date)
-        ASNMetadata.insert(ctx.obj["client"], slug, collector_, date)
+        identifier = ASNMetadata.create(ctx.obj["client"])  # , collector_, date)
+        ASNMetadata.insert(ctx.obj["client"], identifier, collector_, date)

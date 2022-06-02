@@ -13,5 +13,5 @@ class IXPMetadataCLI(MetadataCLI):
         ctx: typer.Context,
         source: IXPMetadataSource = typer.Option(IXPMetadataSource.PeeringDB.value),
     ) -> None:
-        slug = IXPMetadata.create(ctx.obj["client"])  # , source)
-        IXPMetadata.insert(ctx.obj["client"], slug, source)
+        identifier = IXPMetadata.create(ctx.obj["client"])  # , source)
+        IXPMetadata.insert(ctx.obj["client"], identifier, source)

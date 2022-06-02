@@ -1,11 +1,7 @@
-from datetime import datetime
-
 import typer
-from pint import UnitRegistry
-from rich.console import Console
-from rich.table import Table
 
 from metatrace.lib.data import DataSource, create_data, drop_data, list_data
+from metatrace.lib.utilities import print_tables
 
 app = typer.Typer()
 
@@ -14,37 +10,25 @@ app = typer.Typer()
 def init(
     ctx: typer.Context,
     source: DataSource = typer.Option(DataSource.Ark.value),
-    asn_metadata_slug: str = typer.Option(..., metavar="SLUG"),
-    ixp_metadata_slug: str = typer.Option(..., metavar="SLUG"),
+    asn_metadata: str = typer.Option(..., metavar="IDENTIFIER"),
+    geo_metadata: str = typer.Option(..., metavar="IDENTIFIER"),
+    ixp_metadata: str = typer.Option(..., metavar="IDENTIFIER"),
 ) -> None:
-    slug = create_data(ctx.obj["client"], source, asn_metadata_slug, ixp_metadata_slug)
-    typer.echo(slug)
+    identifier = create_data(
+        ctx.obj["client"], source, asn_metadata, geo_metadata, ixp_metadata
+    )
+    typer.echo(identifier)
 
 
 @app.command()
-def remove(ctx: typer.Context, slug: list[str]) -> None:
-    for slug_ in slug:
-        drop_data(ctx.obj["client"], slug_)
+def remove(ctx: typer.Context, identifier: list[str]) -> None:
+    for identifier_ in identifier:
+        drop_data(ctx.obj["client"], identifier_)
 
 
 @app.command("list")
-def list_(ctx: typer.Context) -> None:
-    ureg = UnitRegistry()
-    table = Table()
-    table.add_column("Slug")
-    table.add_column("Source")
-    table.add_column("Creation date")
-    table.add_column("Rows")
-    table.add_column("Size")
+def list_(
+    ctx: typer.Context, quiet: bool = typer.Option(False, "--quiet", "-q")
+) -> None:
     tables = list_data(ctx.obj["client"])
-    for t in tables:
-        total_bytes = t["total_bytes"] * ureg.byte
-        table.add_row(
-            t["attributes"]["slug"],
-            t["attributes"]["source"],
-            datetime.fromisoformat(t["attributes"]["created_at"]).strftime("%c"),
-            str(t["total_rows"]),
-            f"{total_bytes:P#~}",
-        )
-    console = Console()
-    console.print(table)
+    print_tables(ctx.obj["console"], ctx.obj["units"], tables, quiet)

@@ -17,7 +17,11 @@ class ASNMetadata(Metadata):
 
     @classmethod
     def insert(
-        cls, client: ClickHouseClient, slug: str, collector: Collector, date: datetime
+        cls,
+        client: ClickHouseClient,
+        identifier: str,
+        collector: Collector,
+        date: datetime,
     ) -> None:
         logger.info("Downloading RIB...")
         rib = collector.download_rib(date, ".")
@@ -29,4 +33,4 @@ class ASNMetadata(Metadata):
             {"prefix": prefix, "asn": asn if isinstance(asn, int) else asn.pop()}
             for prefix, asn in prefixes.items()
         ]
-        insert_into(client, cls.table_name(slug), rows)
+        insert_into(client, cls.table_name(identifier), rows)
