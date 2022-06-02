@@ -89,7 +89,7 @@ def list_tables(client: ClickHouseClient, prefix: str) -> list[dict]:
     query = """
     SELECT
         name,
-        comment AS attributes,
+        comment AS info,
         total_bytes,
         total_rows
     FROM system.tables
@@ -97,7 +97,7 @@ def list_tables(client: ClickHouseClient, prefix: str) -> list[dict]:
     """
     rows = client.json(query, {"database": client.config["database"], "prefix": prefix})
     for row in rows:
-        row["attributes"] = json.loads(row["attributes"])
+        row["info"] = json.loads(row["info"])
     return rows
 
 

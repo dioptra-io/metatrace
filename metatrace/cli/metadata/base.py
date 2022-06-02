@@ -21,7 +21,7 @@ class MetadataCLI:
         tables = cls.metadata_cls.list(ctx.obj["client"])
         if quiet:
             for t in tables:
-                typer.echo(t["attributes"]["slug"])
+                typer.echo(t["info"]["slug"])
             return
         ureg = UnitRegistry()
         table = Table(box=None, header_style="")
@@ -31,11 +31,11 @@ class MetadataCLI:
         table.add_column("SIZE")
         for t in tables:
             created_at = (
-                datetime.fromisoformat(t["attributes"]["created_at"]) - datetime.now()
+                datetime.fromisoformat(t["info"]["created_at"]) - datetime.now()
             )
             total_bytes = t["total_bytes"] * ureg.byte
             table.add_row(
-                t["attributes"]["slug"],
+                t["info"]["slug"],
                 format_timedelta(created_at, add_direction=True),
                 str(t["total_rows"]),
                 f"{total_bytes:.2fP#~}",
