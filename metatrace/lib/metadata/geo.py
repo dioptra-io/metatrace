@@ -4,6 +4,7 @@ import pandas as pd
 from pych_client import ClickHouseClient
 
 from metatrace.lib.clickhouse import insert_into
+from metatrace.lib.logger import logger
 from metatrace.lib.metadata.base import Metadata
 from metatrace.lib.utilities import download_file, temporary_directory
 
@@ -36,17 +37,24 @@ class GeolocationMetadata(Metadata):
             blocks_file_ipv6 = next(path.glob("**/GeoLite2-City-Blocks-IPv6.csv"))
             locations_file = next(path.glob("**/GeoLite2-City-Locations-en.csv"))
             blocks_cols = ["network", "geoname_id", "latitude", "longitude"]
+            logger.info(
+                "Load blocks ipv4_file=%s ipv6_file=%s",
+                blocks_file_ipv4,
+                blocks_file_ipv6,
+            )
             blocks = pd.concat(
                 [
                     pd.read_csv(blocks_file_ipv4, usecols=blocks_cols),
                     pd.read_csv(blocks_file_ipv6, usecols=blocks_cols),
                 ]
             )
+            logger.info("Load locations file=%s", locations_file)
             locations = pd.read_csv(
                 locations_file,
                 index_col="geoname_id",
                 usecols=["geoname_id", "country_name", "city_name"],
             )
+            logger.info("Merge blocks and locations")
             rows = (
                 blocks.join(locations)
                 .drop("geoname_id", axis=1)

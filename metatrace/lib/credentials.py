@@ -19,6 +19,7 @@ DEFAULT_PASSWORD = ""
 
 
 def get_credentials(
+    credentials_file: Path,
     base_url: Optional[str],
     database: Optional[str],
     username: Optional[str],
@@ -45,7 +46,7 @@ def get_credentials(
             os.environ.get(USERNAME_ENV, DEFAULT_USERNAME),
             os.environ.get(PASSWORD_ENV, DEFAULT_PASSWORD),
         )
-    if CREDENTIALS_FILE.exists():
+    if credentials_file.exists():
         logger.debug("using credentials from %s", CREDENTIALS_FILE)
         credentials = json.loads(CREDENTIALS_FILE.read_text())
         return (

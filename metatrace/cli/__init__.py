@@ -1,5 +1,6 @@
 import logging
 from enum import Enum
+from pathlib import Path
 from typing import Optional
 
 import typer
@@ -13,7 +14,7 @@ from metatrace.cli import data
 from metatrace.cli.metadata.asn import ASNMetadataCLI
 from metatrace.cli.metadata.geo import GeolocationMetadataCLI
 from metatrace.cli.metadata.ixp import IXPMetadataCLI
-from metatrace.lib.credentials import get_credentials
+from metatrace.lib.credentials import CREDENTIALS_FILE, get_credentials
 
 app = typer.Typer(
     context_settings={"max_content_width": 200},
@@ -62,11 +63,31 @@ def version_callback(value: bool) -> None:
 @app.callback()
 def main(
     ctx: typer.Context,
-    base_url: Optional[str] = typer.Option(None, metavar="URL"),
-    database: Optional[str] = typer.Option(None, metavar="DATABASE"),
-    username: Optional[str] = typer.Option(None, metavar="USERNAME"),
-    password: Optional[str] = typer.Option(None, metavar="PASSWORD"),
-    log_level: Optional[LogLevel] = typer.Option(None, case_sensitive=False),
+    base_url: Optional[str] = typer.Option(
+        None,
+        help="ClickHouse HTTP(S) URL",
+        metavar="URL",
+    ),
+    database: Optional[str] = typer.Option(
+        None,
+        help="ClickHouse database",
+        metavar="DATABASE",
+    ),
+    username: Optional[str] = typer.Option(
+        None,
+        help="ClickHouse username",
+        metavar="USERNAME",
+    ),
+    password: Optional[str] = typer.Option(
+        None,
+        help="ClickHouse password",
+        metavar="PASSWORD",
+    ),
+    credentials_file: Path = typer.Option(
+        CREDENTIALS_FILE,
+        help="JSON file containing the credentials",
+    ),
+    log_level: LogLevel = typer.Option(LogLevel.Info.value, case_sensitive=False),
     _version: Optional[bool] = typer.Option(
         None,
         "--version",
@@ -74,15 +95,15 @@ def main(
         help="Print program version.",
     ),
 ) -> None:
-    if log_level:
-        logging.basicConfig(
-            format="%(message)s",
-            handlers=[RichHandler()],
-            level=log_level.value,
-        )
+    logging.basicConfig(
+        datefmt="[%X]",
+        format="%(message)s",
+        handlers=[RichHandler(console=Console(stderr=True), show_path=False)],
+        level=log_level.value,
+    )
     ctx.obj = {
         "client": ClickHouseClient(
-            *get_credentials(base_url, database, username, password)
+            *get_credentials(credentials_file, base_url, database, username, password)
         ),
         "console": Console(),
         "units": UnitRegistry(),

@@ -8,6 +8,8 @@ authors = [
     "Kevin Vermeulen <kevin.vermeulen@cnrs.fr>",
 ]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/dioptra-io/metatrace"
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -41,6 +43,15 @@ warn_redundant_casts = true
 warn_return_any = true
 warn_unreachable = true
 warn_unused_ignores = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "if TYPE_CHECKING:$",
+    "if __name__ == \"__main__\":$",
+    "pass$",
+    "\\s\\.\\.\\.$",
+    "raise NotImplementedError$"
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -1,0 +1,4 @@
+*
+!metatrace/
+!poetry.lock
+!pyproject.toml
