@@ -9,7 +9,9 @@ from metatrace.lib.data import (
     delete_data,
     insert_data,
     list_data,
+    query_data,
 )
+from metatrace.lib.metadata import ASNMetadata, GeolocationMetadata, IXPMetadata
 from metatrace.lib.utilities import print_tables
 
 app = typer.Typer()
@@ -23,7 +25,10 @@ def create(
     ixp_metadata: str = typer.Option(..., metavar="IDENTIFIER"),
 ) -> None:
     identifier = create_data(
-        ctx.obj["client"], asn_metadata, geo_metadata, ixp_metadata
+        ctx.obj["client"],
+        ASNMetadata.dict_name(asn_metadata),
+        GeolocationMetadata.dict_name(geo_metadata),
+        IXPMetadata.dict_name(ixp_metadata),
     )
     typer.echo(identifier)
 
@@ -42,7 +47,7 @@ def insert(
     ),
 ) -> None:
     agents_set = set(agents.split(",")) if agents else set()
-    insert_data(ctx.obj["client"], source, start, stop, agents_set)
+    insert_data(ctx.obj["client"], identifier, source, start, stop, agents_set)
 
 
 @app.command()
@@ -55,3 +60,9 @@ def delete(ctx: typer.Context, identifier: list[str]) -> None:
 def get(ctx: typer.Context, quiet: bool = typer.Option(False, "--quiet", "-q")) -> None:
     tables = list_data(ctx.obj["client"])
     print_tables(ctx.obj["console"], ctx.obj["units"], tables, quiet)
+
+
+@app.command()
+def query(ctx: typer.Context, identifier: str) -> None:
+    for line in query_data(ctx.obj["console"], identifier):
+        typer.echo(line)

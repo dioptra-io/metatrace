@@ -19,9 +19,14 @@ class ASNMetadataCLI(MetadataCLI):
             datetime.now(tz=timezone.utc) - timedelta(hours=2)
         ),
     ) -> None:
-        if collector_ := Collector.from_fqdn(collector):
-            date = collector_.closest(date)
-            identifier = ASNMetadata.create(ctx.obj["client"])  # , collector_, date)
-            ASNMetadata.insert(ctx.obj["client"], identifier, collector_, date)
-        else:
+        collector_ = Collector.from_fqdn(collector)
+        if not collector_:
             typer.echo(f"Unknown collector: {collector}")
+            return
+        date = collector_.closest(date)
+        identifier = ASNMetadata.create(ctx.obj["client"])  # , collector_, date)
+        try:
+            ASNMetadata.insert(ctx.obj["client"], identifier, collector_, date)
+        except Exception as e:
+            ASNMetadata.delete(ctx.obj["client"], identifier)
+            raise e

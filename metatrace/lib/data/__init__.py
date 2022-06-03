@@ -1,10 +1,15 @@
+import subprocess
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime
 from enum import Enum
+from typing import Iterator
 
 from pych_client import ClickHouseClient
+from pych_client.clickhouse_client import get_clickhouse_client_args
+from rich.progress import track
 
 from metatrace.lib.clickhouse import create_table, drop_table, list_tables
-from metatrace.lib.naming import data_table_name, make_identifier
+from metatrace.lib.naming import make_identifier
 from metatrace.lib.sources.ark import ark_probe_data_list
 
 
@@ -102,17 +107,17 @@ def create_data(
     ]
     create_table(
         client,
-        data_table_name(identifier),
+        identifier,
         columns,
         order_by,
         info=attributes,
-        partition_by="toYYYYMM(traceroute_start)",
     )
     return identifier
 
 
 def insert_data(
     client: ClickHouseClient,
+    identifier: str,
     source: DataSource,
     start: datetime,
     stop: datetime,
@@ -123,15 +128,73 @@ def insert_data(
             files = []
         case DataSource.ArkTeamProbing:
             files = ark_probe_data_list(1, start, stop)
-    for file in files:
-        if agents and file.monitor not in agents:
-            continue
-        print(f"Download {file.filename}")
+    with ProcessPoolExecutor(max_workers=4) as executor:
+        # TODO: Cleanup zombie processes on exit (see fetchmesh code)
+        futures = []
+        for file in files:
+            if agents and file.monitor not in agents:
+                continue
+            assert file.url
+            futures.append(
+                executor.submit(
+                    _insert_file, config=client.config, table=identifier, url=file.url
+                )
+            )
+        for future in track(as_completed(futures), total=len(futures)):
+            future.result()
+
+
+def _insert_file(config: dict, table: str, url: str) -> None:
+    # TODO: Implement streaming in pantrace
+    query = "INSERT INTO {table:Identifier} FORMAT JSONEachRow"
+    curl = subprocess.Popen(
+        ["curl", "--location", "--show-error", "--silent", url], stdout=subprocess.PIPE
+    )
+    gzip = subprocess.Popen(
+        ["gzip", "--decompress", "--stdout"], stdin=curl.stdout, stdout=subprocess.PIPE
+    )
+    pantrace = subprocess.Popen(
+        [
+            "/Users/maxmouchet/Clones/github.com/dioptra-io/pantrace/target/release/pantrace",
+            "--from=warts",
+            "--to=internal",
+        ],
+        stdin=gzip.stdout,
+        stdout=subprocess.PIPE,
+    )
+    clickhouse_client = subprocess.Popen(
+        [
+            "clickhouse",
+            "client",
+            *get_clickhouse_client_args(
+                config,
+                query,
+                {"table": table},
+                {
+                    "date_time_input_format": "best_effort",
+                    "input_format_skip_unknown_fields": 1,
+                },
+            ),
+        ],
+        stdin=pantrace.stdout,
+    )
+    if curl.stdout:
+        curl.stdout.close()
+    if gzip.stdout:
+        gzip.stdout.close()
+    if pantrace.stdout:
+        pantrace.stdout.close()
+    clickhouse_client.communicate()
 
 
 def delete_data(client: ClickHouseClient, identifier: str) -> None:
-    drop_table(client, data_table_name(identifier))
+    drop_table(client, identifier)
 
 
 def list_data(client: ClickHouseClient) -> list[dict]:
-    return list_tables(client, data_table_name(""))
+    return list_tables(client, "data_")
+
+
+def query_data(client: ClickHouseClient, identifier: str) -> Iterator[str]:
+    query = "SELECT DISTINCT agent_id, probe_dst_addr, traceroute_start FROM {table:Identifier}"
+    return client.iter_text(query, {"table": identifier})

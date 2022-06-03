@@ -480,7 +480,7 @@ python-versions = "*"
 
 [[package]]
 name = "pych-client"
-version = "0.2.10"
+version = "0.2.12"
 description = "A ClickHouse client for Python, with a command-line interface."
 category = "main"
 optional = false
@@ -591,7 +591,7 @@ six = ">=1.5"
 
 [[package]]
 name = "pytz"
-version = "2021.3"
+version = "2022.1"
 description = "World timezone definitions, modern and historical"
 category = "main"
 optional = false
@@ -768,7 +768,7 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "dff3888c72275d69e1a9bd5164da7d1d303d0566b851a0fdad768dc3650e8830"
+content-hash = "0b1ba38fbc359f66c8cfcd6ded71d8eab1a0d9fd8b8b2ed326eee3aa64643809"
 
 [metadata.files]
 anyio = [
@@ -1054,8 +1054,8 @@ pyasn = [
     {file = "pyasn-1.6.1.tar.gz", hash = "sha256:e942b54916363ec7b8b70eaeaecd0eb4e41ef1bcf4a2397b29a6d715fccdf925"},
 ]
 pych-client = [
-    {file = "pych-client-0.2.10.tar.gz", hash = "sha256:28828c26942986806bf1b37bee1ad85c1ce66863376302dff185c2c9d3cbfc7c"},
-    {file = "pych_client-0.2.10-py3-none-any.whl", hash = "sha256:06855f3cb6fb6615347c85a4f0b21dba862636f1768a58218fbee9deafff2b4a"},
+    {file = "pych-client-0.2.12.tar.gz", hash = "sha256:17aec350e20280e278aa30dcb78962720822ae4b3a343f2ffced46c9f12fc385"},
+    {file = "pych_client-0.2.12-py3-none-any.whl", hash = "sha256:c2c09324cc0e3929b0d20bde148706d34ec812b359f0f2fd18f56bbd96602f1a"},
 ]
 pycodestyle = [
     {file = "pycodestyle-2.8.0-py2.py3-none-any.whl", hash = "sha256:720f8b39dde8b293825e7ff02c475f3077124006db4f440dcbc9a20b76548a20"},
@@ -1123,8 +1123,8 @@ python-dateutil = [
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
 ]
 pytz = [
-    {file = "pytz-2021.3-py2.py3-none-any.whl", hash = "sha256:3672058bc3453457b622aab7a1c3bfd5ab0bdae451512f6cf25f64ed37f5b87c"},
-    {file = "pytz-2021.3.tar.gz", hash = "sha256:acad2d8b20a1af07d4e4c9d2e9285c5ed9104354062f275f3fcd88dcef4f1326"},
+    {file = "pytz-2022.1-py2.py3-none-any.whl", hash = "sha256:e68985985296d9a66a881eb3193b0906246245294a881e7c8afe623866ac6a5c"},
+    {file = "pytz-2022.1.tar.gz", hash = "sha256:1e760e2fe6a8163bc0b3d9a19c4f84342afa0a2affebfaa84b01b978a02ecaa7"},
 ]
 pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},

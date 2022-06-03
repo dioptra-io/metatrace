@@ -17,12 +17,16 @@ class IXPMetadata(Metadata):
 
     @classmethod
     def insert(
-        cls, client: ClickHouseClient, identifier: str, source: IXPMetadataSource
+        cls,
+        client: ClickHouseClient,
+        identifier: str,
+        source: IXPMetadataSource,
+        api_key: str | None,
     ) -> None:
         rows = []
         match source:
             case IXPMetadataSource.PeeringDB:
-                pdb = PeeringDB.from_api()
+                pdb = PeeringDB.from_api(api_key=api_key)
                 for obj in pdb.objects:
                     for prefix in obj.prefixes:
                         rows.append({"prefix": prefix.prefix, "ixp": obj.ix.name})

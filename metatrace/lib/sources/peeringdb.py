@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import httpx
 from more_itertools import map_reduce
 
-PEERINGDB_BASE_URL = "https://peeringdb.com/api"
+PEERINGDB_BASE_URL = "https://www.peeringdb.com/api/"
 
 
 @dataclass(frozen=True)
@@ -63,11 +63,16 @@ class PeeringDB:
         self.objects = objects
 
     @classmethod
-    def from_api(cls, base_url: str = PEERINGDB_BASE_URL) -> "PeeringDB":
+    def from_api(
+        cls, base_url: str = PEERINGDB_BASE_URL, api_key: str | None = None
+    ) -> "PeeringDB":
         """Load PeeringDB from the PeeringDB API."""
-        with httpx.Client(base_url=base_url) as client:
+        headers = {}
+        if api_key:
+            headers = {"Authorization": f"Api-Key {api_key}"}
+        with httpx.Client(base_url=base_url, headers=headers, timeout=30) as client:
             ixs = [IX.from_dict(x) for x in client.get("ix.json").json()["data"]]
-            lans = [LAN.from_dict(x) for x in client.get("ixlans.json").json()["data"]]
+            lans = [LAN.from_dict(x) for x in client.get("ixlan.json").json()["data"]]
             pfxs = [
                 Prefix.from_dict(x) for x in client.get("ixpfx.json").json()["data"]
             ]
