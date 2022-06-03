@@ -1,14 +1,14 @@
 import typer
 
 from metatrace.cli.metadata.base import MetadataCLI
-from metatrace.lib.metadata.geo import GeolocationMetadata
+from metatrace.lib.metadata import GeolocationMetadata
 
 
 class GeolocationMetadataCLI(MetadataCLI):
     metadata_cls = GeolocationMetadata
 
     @classmethod
-    def add(
+    def create(
         cls, ctx: typer.Context, license_key: str = typer.Option(..., metavar="KEY")
     ) -> None:
         identifier = GeolocationMetadata.create(ctx.obj["client"])

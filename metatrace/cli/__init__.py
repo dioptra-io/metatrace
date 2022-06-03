@@ -11,9 +11,11 @@ from rich.logging import RichHandler
 
 from metatrace import __version__
 from metatrace.cli import data
-from metatrace.cli.metadata.asn import ASNMetadataCLI
-from metatrace.cli.metadata.geo import GeolocationMetadataCLI
-from metatrace.cli.metadata.ixp import IXPMetadataCLI
+from metatrace.cli.metadata import (
+    ASNMetadataCLI,
+    GeolocationMetadataCLI,
+    IXPMetadataCLI,
+)
 from metatrace.lib.credentials import CREDENTIALS_FILE, get_credentials
 
 app = typer.Typer(

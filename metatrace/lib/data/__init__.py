@@ -5,15 +5,16 @@ from pych_client import ClickHouseClient
 
 from metatrace.lib.clickhouse import create_table, drop_table, list_tables
 from metatrace.lib.naming import data_table_name, make_identifier
+from metatrace.lib.sources.ark import ark_probe_data_list
 
 
 class DataSource(Enum):
-    Ark = "ark"
+    ArkPrefixProbing = "ark-prefix-probing"
+    ArkTeamProbing = "ark-team-probing"
 
 
 def create_data(
     client: ClickHouseClient,
-    source: DataSource,
     asn_dict_name: str,
     geo_dict_name: str,
     ixp_dict_name: str,
@@ -23,7 +24,6 @@ def create_data(
     attributes = {
         "created_at": created_at.isoformat(),
         "identifier": identifier,
-        "source": source.value,
     }
     columns = [
         ("measurement_id", "String"),
@@ -111,10 +111,25 @@ def create_data(
     return identifier
 
 
-# def add_data(client: ClickHouseClient, source: DataSource)
+def insert_data(
+    client: ClickHouseClient,
+    source: DataSource,
+    start: datetime,
+    stop: datetime,
+    agents: set[str],
+) -> None:
+    match source:
+        case DataSource.ArkPrefixProbing:
+            files = []
+        case DataSource.ArkTeamProbing:
+            files = ark_probe_data_list(1, start, stop)
+    for file in files:
+        if agents and file.monitor not in agents:
+            continue
+        print(f"Download {file.filename}")
 
 
-def drop_data(client: ClickHouseClient, identifier: str) -> None:
+def delete_data(client: ClickHouseClient, identifier: str) -> None:
     drop_table(client, data_table_name(identifier))
 
 

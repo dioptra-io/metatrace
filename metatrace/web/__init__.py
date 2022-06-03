@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI
 from pych_client import ClickHouseClient
 
 from metatrace.lib.credentials import CREDENTIALS_FILE, get_credentials
-from metatrace.lib.metadata.asn import ASNMetadata
+from metatrace.lib.metadata import ASNMetadata
 
 app = FastAPI()
 
@@ -15,4 +15,4 @@ def get_clickhouse() -> ClickHouseClient:
 
 @app.get("/metadata/asn")
 def list_asn(clickhouse: ClickHouseClient = Depends(get_clickhouse)) -> list[dict]:
-    return ASNMetadata.list(clickhouse)
+    return ASNMetadata.get(clickhouse)

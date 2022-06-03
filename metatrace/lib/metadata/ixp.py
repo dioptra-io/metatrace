@@ -1,10 +1,10 @@
 from enum import Enum
 
-from fetchmesh.peeringdb import PeeringDB
 from pych_client import ClickHouseClient
 
 from metatrace.lib.clickhouse import insert_into
-from metatrace.lib.metadata.base import Metadata
+from metatrace.lib.metadata import Metadata
+from metatrace.lib.sources import PeeringDB
 
 
 class IXPMetadataSource(Enum):

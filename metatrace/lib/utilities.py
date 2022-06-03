@@ -14,6 +14,7 @@ from rich.table import Table
 
 def download_file(url: str, params: dict, path: Path) -> None:
     with httpx.stream("GET", url, params=params) as response:
+        response.raise_for_status()
         total = int(response.headers["Content-Length"])
         with path.open("wb") as file:
             with Progress(

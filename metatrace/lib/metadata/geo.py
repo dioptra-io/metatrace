@@ -5,7 +5,7 @@ from pych_client import ClickHouseClient
 
 from metatrace.lib.clickhouse import insert_into
 from metatrace.lib.logger import logger
-from metatrace.lib.metadata.base import Metadata
+from metatrace.lib.metadata import Metadata
 from metatrace.lib.utilities import download_file, temporary_directory
 
 

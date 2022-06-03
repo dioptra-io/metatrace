@@ -34,12 +34,12 @@ class Metadata:
         return identifier
 
     @classmethod
-    def drop(cls, client: ClickHouseClient, identifier: str) -> None:
+    def delete(cls, client: ClickHouseClient, identifier: str) -> None:
         drop_dict(client, cls.dict_name(identifier))
         drop_table(client, cls.table_name(identifier))
 
     @classmethod
-    def list(cls, client: ClickHouseClient) -> list[dict]:
+    def get(cls, client: ClickHouseClient) -> list[dict]:
         return list_tables(client, cls.table_name(cls.shortname))
 
     @classmethod

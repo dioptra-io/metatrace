@@ -7,7 +7,7 @@ poetry shell
 
 ```bash
 metatrace metadata asn add --collector route-views2.routeviews.org --date 2014-01-01T00:00:00
-metatrace metadata asn list
+metatrace metadata asn get
 # ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┓
 # ┃ Identifier              ┃ Collector                   ┃ Date                     ┃ Creation date            ┃ Rows   ┃ Size                  ┃
 # ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━┩
@@ -15,12 +15,12 @@ metatrace metadata asn list
 # └───────────────────┴─────────────────────────────┴──────────────────────────┴──────────────────────────┴────────┴───────────────────────┘
 metatrace metadata asn query 202205312208_1f59 8.8.8.8
 # 15169
-metatrace metadata asn remove 202205312208_1f59
+metatrace metadata asn delete 202205312208_1f59
 ```
 
 ```bash
 metatrace metadata ixp add --source peeringdb
-metatrace metadata ixp list
+metatrace metadata ixp get
 # ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━┓
 # ┃ Identifier              ┃ Source    ┃ Creation date            ┃ Rows ┃ Size      ┃
 # ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━┩
@@ -28,12 +28,12 @@ metatrace metadata ixp list
 # └───────────────────┴───────────┴──────────────────────────┴──────┴───────────┘
 metatrace metadata ixp query 202205312134_6cf2 2001:7f8:1::1
 # AMS-IX
-metatrace metadata ixp remove 202205312134_6cf2
+metatrace metadata ixp delete 202205312134_6cf2
 ```
 
 ```bash
-metatrace data init --asn-metadata-identifier 202205312208_1f59 --ixp-metadata-identifier 202205312134_6cf2
-metatrace data list
+metatrace data create --asn-metadata-identifier 202205312208_1f59 --ixp-metadata-identifier 202205312134_6cf2
+metatrace data get
 # ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━┓
 # ┃ Identifier              ┃ Source ┃ Creation date            ┃ Rows ┃ Size ┃
 # ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━┩
