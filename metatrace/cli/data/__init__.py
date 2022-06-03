@@ -64,5 +64,5 @@ def get(ctx: typer.Context, quiet: bool = typer.Option(False, "--quiet", "-q")) 
 
 @app.command()
 def query(ctx: typer.Context, identifier: str) -> None:
-    for line in query_data(ctx.obj["console"], identifier):
+    for line in query_data(ctx.obj["client"], identifier):
         typer.echo(line)

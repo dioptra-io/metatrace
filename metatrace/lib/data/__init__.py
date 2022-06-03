@@ -195,6 +195,10 @@ def list_data(client: ClickHouseClient) -> list[dict]:
     return list_tables(client, "data_")
 
 
-def query_data(client: ClickHouseClient, identifier: str) -> Iterator[str]:
-    query = "SELECT DISTINCT agent_id, probe_dst_addr, traceroute_start FROM {table:Identifier}"
-    return client.iter_text(query, {"table": identifier})
+def query_data(client: ClickHouseClient, identifier: str) -> Iterator[bytes]:
+    query = """
+    SELECT DISTINCT agent_id, probe_dst_addr, traceroute_start
+    FROM {table:Identifier}
+    FORMAT CSV
+    """
+    return client.iter_bytes(query, {"table": identifier})
