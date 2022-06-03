@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Identifier</th>
+            <th scope="col">Created</th>
+            <th scope="col">Rows</th>
+            <th scope="col">Size</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for meta in asns %}
+        <tr>
+            <td>{{ meta.info.identifier }}</td>
+            <td>{{ meta.info.created_at }}</td>
+            <td>{{ meta.total_rows }}</td>
+            <td>{{ meta.total_bytes }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Identifier</th>
+            <th scope="col">Created</th>
+            <th scope="col">Rows</th>
+            <th scope="col">Size</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for meta in geos %}
+        <tr>
+            <td>{{ meta.info.identifier }}</td>
+            <td>{{ meta.info.created_at }}</td>
+            <td>{{ meta.total_rows }}</td>
+            <td>{{ meta.total_bytes }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="bg-light p-5 rounded">
+        <h1>Navbar example</h1>
+        <p class="lead">This example is a quick exercise to illustrate how fixed to top navbar works. As you scroll, it
+            will remain fixed to the top of your browser’s viewport.</p>
+        <a class="btn btn-lg btn-primary" href="/docs/5.2/components/navbar/" role="button">View navbar docs &raquo;</a>
+    </div>
+</div>
+{% endblock %}

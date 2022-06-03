@@ -146,6 +146,7 @@ def insert_data(
 
 def _insert_file(config: dict, table: str, url: str) -> None:
     # TODO: Implement streaming in pantrace
+    # TODO: Rollback if fails (use tag column + partition on tag + drop partition?)
     query = "INSERT INTO {table:Identifier} FORMAT JSONEachRow"
     curl = subprocess.Popen(
         ["curl", "--location", "--show-error", "--silent", url], stdout=subprocess.PIPE
