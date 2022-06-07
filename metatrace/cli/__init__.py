@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 import typer
+import uvicorn
 from pint import UnitRegistry
 from pych_client import ClickHouseClient
 from rich.console import Console
@@ -48,7 +49,7 @@ app.add_typer(
 
 
 class LogLevel(Enum):
-    NotSet = "NOTSET"
+    Trace = "TRACE"
     Debug = "DEBUG"
     Info = "INFO"
     Warning = "WARNING"
@@ -67,27 +68,27 @@ def main(
     ctx: typer.Context,
     base_url: Optional[str] = typer.Option(
         None,
-        help="ClickHouse HTTP(S) URL",
+        help="ClickHouse HTTP(S) URL.",
         metavar="URL",
     ),
     database: Optional[str] = typer.Option(
         None,
-        help="ClickHouse database",
+        help="ClickHouse database.",
         metavar="DATABASE",
     ),
     username: Optional[str] = typer.Option(
         None,
-        help="ClickHouse username",
+        help="ClickHouse username.",
         metavar="USERNAME",
     ),
     password: Optional[str] = typer.Option(
         None,
-        help="ClickHouse password",
+        help="ClickHouse password.",
         metavar="PASSWORD",
     ),
     credentials_file: Path = typer.Option(
         CREDENTIALS_FILE,
-        help="JSON file containing the credentials",
+        help="JSON file containing the credentials.",
     ),
     log_level: LogLevel = typer.Option(LogLevel.Info.value, case_sensitive=False),
     _version: Optional[bool] = typer.Option(
@@ -108,5 +109,24 @@ def main(
             *get_credentials(credentials_file, base_url, database, username, password)
         ),
         "console": Console(),
+        "log_level": log_level.value,
         "units": UnitRegistry(),
     }
+
+
+@app.command()
+def server(
+    ctx: typer.Context,
+    host: str = typer.Option("127.0.0.1", help="The IP address to listen on."),
+    port: int = typer.Option(5000, help="The port to listen on."),
+    browser: bool = typer.Option(True, help="Whether to open the web browser or not."),
+) -> None:
+    if browser:
+        # webbrowser.open(f"http://{host}:{port}")
+        pass
+    uvicorn.run(
+        "metatrace.api:app",
+        host=host,
+        port=port,
+        log_level=ctx.obj["log_level"].lower(),
+    )

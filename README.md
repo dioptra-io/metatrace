@@ -1,5 +1,12 @@
 # metatrace
 
+---
+TODO:
+- Add local radix-tree loaded from CH (.radix_tree() method on Metadata)
+- Refactor metadata as a single type with (identifier, kind, source, date, creation_date, ...) => metadata tab on website
+- show error page when clickhouse cannot be reached which explains how to configure metatrace
+---
+
 ```bash
 poetry install
 poetry shell
@@ -74,7 +81,7 @@ WHERE reply_ixp = 'AMS-IX'
 ### Traceroutes going through multiple ASNs (or IXPs, countries...)
 
 ```sql
-WITH groupArray(reply_asn) AS asns
+WITH groupUniqArray(reply_asn) AS asns
 SELECT
     agent_id,
     probe_dst_addr,
