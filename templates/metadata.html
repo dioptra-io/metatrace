@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Kind</th>
+            <th scope="col">Identifier</th>
+            <th scope="col">Created</th>
+            <th scope="col">Rows</th>
+            <th scope="col">Size</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for meta in metadata %}
+        <tr>
+            <td>{{ meta.kind }}</td>
+            <td>{{ meta.info.identifier }}</td>
+            <td>{{ meta.info.created_at }}</td>
+            <td>{{ meta.total_rows }}</td>
+            <td>{{ meta.total_bytes }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

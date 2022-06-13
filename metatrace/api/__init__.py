@@ -1,4 +1,7 @@
+import json
+
 import arel
+import httpx
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -36,15 +39,47 @@ def get_clickhouse() -> ClickHouseClient:
         yield client
 
 
+# TODO: More specific error for pych-client specifically?
+@app.exception_handler(httpx.ConnectError)
+def connect_error_handler(request: Request, exc: httpx.ConnectError) -> Response:
+    return templates.TemplateResponse(
+        "errors/database.html",
+        {
+            "request": request,
+            "config": json.dumps(
+                {
+                    "base_url": "http://localhost:8123",
+                    "database": "default",
+                    "username": "default",
+                    "password": "***",
+                },
+                indent=2,
+            ),
+        },
+        status_code=500,
+    )
+
+
 @app.get("/", response_class=HTMLResponse)
-async def index(
+def index(
     request: Request, clickhouse: ClickHouseClient = Depends(get_clickhouse)
 ) -> Response:
-    asns = ASNMetadata.get(clickhouse)
-    geos = GeolocationMetadata.get(clickhouse)
-    ixps = IXPMetadata.get(clickhouse)
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get("/metadata", response_class=HTMLResponse)
+def list_metadata(
+    request: Request, clickhouse: ClickHouseClient = Depends(get_clickhouse)
+) -> Response:
+    metadata = []
+    for meta in ASNMetadata.get(clickhouse):
+        metadata.append({"kind": "asn", **meta})
+    for meta in GeolocationMetadata.get(clickhouse):
+        metadata.append({"kind": "geo", **meta})
+    for meta in IXPMetadata.get(clickhouse):
+        metadata.append({"kind": "ixp", **meta})
     return templates.TemplateResponse(
-        "index.html", {"request": request, "asns": asns, "geos": geos, "ixps": ixps}
+        "metadata.html", {"request": request, "metadata": metadata}
     )
 
 

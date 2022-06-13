@@ -1,0 +1,33 @@
+<html lang="en">
+<head>
+    <title>MetaTrace</title>
+    <style>
+        html, body, .container {
+            height: 100%;
+            font-family: sans-serif;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3>MetaTrace is loading...</h3>
+</div>
+<script>
+    const url = "http://{{ host }}:{{ port }}";
+    redirect = () => {
+        fetch(url, {"mode": "no-cors"}).then(_ => {
+            window.location = url;
+        }).catch(_ => {
+            console.log("Waiting for server...")
+            setTimeout(redirect, 250);
+        })
+    }
+    redirect();
+</script>
+</body>
+</html>

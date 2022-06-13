@@ -1,10 +1,13 @@
 import logging
+import webbrowser
 from enum import Enum
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Optional
 
 import typer
 import uvicorn
+from jinja2 import Template
 from pint import UnitRegistry
 from pych_client import ClickHouseClient
 from rich.console import Console
@@ -118,15 +121,21 @@ def main(
 def server(
     ctx: typer.Context,
     host: str = typer.Option("127.0.0.1", help="The IP address to listen on."),
-    port: int = typer.Option(5000, help="The port to listen on."),
+    port: int = typer.Option(5555, help="The port to listen on."),
     browser: bool = typer.Option(True, help="Whether to open the web browser or not."),
 ) -> None:
-    if browser:
-        # webbrowser.open(f"http://{host}:{port}")
-        pass
-    uvicorn.run(
-        "metatrace.api:app",
-        host=host,
-        port=port,
-        log_level=ctx.obj["log_level"].lower(),
-    )
+    # TODO: Pass base_url, ...
+    # TODO: Env loader
+    with open("templates/wait.html") as f:
+        template = Template(f.read())
+    with NamedTemporaryFile("w", suffix=".html") as f:
+        f.write(template.render(host=host, port=port))
+        f.flush()
+        if browser:
+            webbrowser.open(f"file:///{f.name}")
+        uvicorn.run(
+            "metatrace.api:app",
+            host=host,
+            port=port,
+            log_level=ctx.obj["log_level"].lower(),
+        )

@@ -43,7 +43,7 @@ def print_tables(
         created_at = datetime.fromisoformat(t["info"]["created_at"]) - datetime.now()
         total_bytes = t["total_bytes"] * units.byte
         table.add_row(
-            t["info"]["identifier"],
+            t["info"].get("identifier"),
             format_timedelta(created_at, add_direction=True),
             str(t["total_rows"]),
             f"{total_bytes:.2fP#~}",
