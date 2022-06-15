@@ -20,9 +20,9 @@ class DataSource(Enum):
 
 def create_data(
     client: ClickHouseClient,
-    asn_dict_name: str,
-    geo_dict_name: str,
-    ixp_dict_name: str,
+    asn_dict_name: str | None,
+    geo_dict_name: str | None,
+    ixp_dict_name: str | None,
 ) -> str:
     created_at = datetime.now()
     identifier = make_identifier("data", created_at)
@@ -61,45 +61,53 @@ def create_data(
             "toIPv6(cutIPv6(reply_src_addr, 8, 1))",
         ),
         (
-            "reply_asn",
-            "UInt32",
-            "MATERIALIZED",
-            f"dictGetUInt32('{asn_dict_name}', 'asn', reply_src_addr)",
-        ),
-        (
-            "reply_country",
-            "String",
-            "MATERIALIZED",
-            f"dictGetString('{geo_dict_name}', 'country', reply_src_addr)",
-        ),
-        (
-            "reply_ixp",
-            "String",
-            "MATERIALIZED",
-            f"dictGetString('{ixp_dict_name}', 'ixp', reply_src_addr)",
-        ),
-        # Projections
-        (
             "PROJECTION",
             "reply_src_addr_proj",
             "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_src_addr ORDER BY reply_src_addr)",
         ),
-        (
-            "PROJECTION",
-            "reply_asn_proj",
-            "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_asn ORDER BY reply_asn)",
-        ),
-        (
-            "PROJECTION",
-            "reply_country_proj",
-            "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_country ORDER BY reply_country)",
-        ),
-        (
-            "PROJECTION",
-            "reply_ixp_proj",
-            "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_ixp ORDER BY reply_ixp)",
-        ),
     ]
+    if asn_dict_name:
+        columns += [
+            (
+                "reply_asn",
+                "UInt32",
+                "MATERIALIZED",
+                f"dictGetUInt32('{asn_dict_name}', 'asn', reply_src_addr)",
+            ),
+            (
+                "PROJECTION",
+                "reply_asn_proj",
+                "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_asn ORDER BY reply_asn)",
+            ),
+        ]
+    if geo_dict_name:
+        columns += [
+            (
+                "reply_country",
+                "String",
+                "MATERIALIZED",
+                f"dictGetString('{geo_dict_name}', 'country', reply_src_addr)",
+            ),
+            (
+                "PROJECTION",
+                "reply_country_proj",
+                "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_country ORDER BY reply_country)",
+            ),
+        ]
+    if ixp_dict_name:
+        columns += [
+            (
+                "reply_ixp",
+                "String",
+                "MATERIALIZED",
+                f"dictGetString('{ixp_dict_name}', 'ixp', reply_src_addr)",
+            ),
+            (
+                "PROJECTION",
+                "reply_ixp_proj",
+                "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_ixp ORDER BY reply_ixp)",
+            ),
+        ]
     order_by = [
         "agent_id",
         "probe_dst_addr",
