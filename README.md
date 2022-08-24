@@ -81,6 +81,10 @@ This metadata maps an IP address to its IXP if it belongs to its peering LAN.
 
 TODO: Dataset Kevin?
 
+## Authors
+
+MetaTrace is developed and maintained by the [Dioptra group](https://dioptra.io) at [Sorbonne Université](https://www.sorbonne-universite.fr) in Paris, France.
+
 ---
 TODO:
 - Add local radix-tree loaded from CH (.radix_tree() method on Metadata)
