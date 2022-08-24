@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">{{ exc }}</h4>
+        <dl>
+            <dt>Method</dt>
+            <dd>{{ exc.request.method }}</dd>
+            <dt>URL</dt>
+            <dd><a href="{{ exc.request.url }}">{{ exc.request.url }}</a></dd>
+            {% for k, v in exc.request.headers.items() %}
+            <dt>{{ k }}</dt>
+            <dd>{{ v }}</dd>
+            {% endfor %}
+        </dl>
+    </div>
+</div>
+{% endblock %}

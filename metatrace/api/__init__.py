@@ -1,12 +1,11 @@
-import json
-
 import arel
-import httpx
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from httpx import RequestError
 from pych_client import ClickHouseClient
+from pych_client.exceptions import ClickHouseException
 from starlette.routing import Mount, WebSocketRoute
 
 from metatrace.lib.credentials import CREDENTIALS_FILE, get_credentials
@@ -29,7 +28,7 @@ app = FastAPI(
 )
 
 templates = Jinja2Templates(directory="templates")
-templates.env.globals["DEBUG"] = True  # os.getenv("DEBUG")  # Development flag.
+templates.env.globals["DEBUG"] = True  # os.getenv("DEBUG")  # TODO: Development flag.
 templates.env.globals["hotreload"] = hotreload
 
 
@@ -39,24 +38,17 @@ def get_clickhouse() -> ClickHouseClient:
         yield client
 
 
-# TODO: More specific error for pych-client specifically?
-@app.exception_handler(httpx.ConnectError)
-def connect_error_handler(request: Request, exc: httpx.ConnectError) -> Response:
+@app.exception_handler(RequestError)
+def request_error_handler(request: Request, exc: RequestError) -> Response:
     return templates.TemplateResponse(
-        "errors/database.html",
-        {
-            "request": request,
-            "config": json.dumps(
-                {
-                    "base_url": "http://localhost:8123",
-                    "database": "default",
-                    "username": "default",
-                    "password": "***",
-                },
-                indent=2,
-            ),
-        },
-        status_code=500,
+        "errors/request.html", {"request": request, "exc": exc}, status_code=500
+    )
+
+
+@app.exception_handler(ClickHouseException)
+def clickhouse_error_handler(request: Request, exc: ClickHouseException) -> Response:
+    return templates.TemplateResponse(
+        "errors/query.html", {"request": request, "exc": exc}, status_code=500
     )
 
 

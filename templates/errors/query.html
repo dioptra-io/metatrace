@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">ClickHouse error {{ exc.code }}</h4>
+        <dl>
+            <dt>Error</dt>
+            <dd>{{ exc.error }}</dd>
+            <dt>Query</dt>
+            <dd>{{ exc.query }}</dd>
+        </dl>
+    </div>
+</div>
+{% endblock %}
