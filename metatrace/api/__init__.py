@@ -1,9 +1,12 @@
+import os
+
 import arel
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from httpx import RequestError
+from jinja2 import PackageLoader
 from pych_client import ClickHouseClient
 from pych_client.exceptions import ClickHouseException
 from starlette.routing import Mount, WebSocketRoute
@@ -13,22 +16,30 @@ from metatrace.lib.metadata import ASNMetadata, GeolocationMetadata, IXPMetadata
 
 hotreload = arel.HotReload(
     paths=[
-        arel.Path("./static"),
-        arel.Path("./templates"),
+        arel.Path("metatrace/static"),
+        arel.Path("metatrace/templates"),
     ]
 )
 
 app = FastAPI(
     routes=[
-        Mount("/static", StaticFiles(directory="static"), name="static"),
-        WebSocketRoute("/hot-reload", hotreload, name="hot-reload"),
+        Mount(
+            "/static",
+            StaticFiles(packages=[("metatrace", "static")]),
+            name="static",
+        ),
+        WebSocketRoute(
+            "/hot-reload",
+            hotreload,
+            name="hot-reload",
+        ),
     ],
     on_startup=[hotreload.startup],
     on_shutdown=[hotreload.shutdown],
 )
 
-templates = Jinja2Templates(directory="templates")
-templates.env.globals["DEBUG"] = True  # os.getenv("DEBUG")  # TODO: Development flag.
+templates = Jinja2Templates("", loader=PackageLoader("metatrace"))
+templates.env.globals["DEBUG"] = os.getenv("DEBUG")
 templates.env.globals["hotreload"] = hotreload
 
 

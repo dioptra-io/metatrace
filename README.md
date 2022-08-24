@@ -7,6 +7,8 @@ TODO:
 - show error page when clickhouse cannot be reached which explains how to configure metatrace
 - Add AS classification meta
 - Add quoted TTL field
+- Document configuration
+- Update queries (look on CH query log)
 ---
 
 ```bash
