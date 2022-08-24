@@ -6,6 +6,7 @@ TODO:
 - Refactor metadata as a single type with (identifier, kind, source, date, creation_date, ...) => metadata tab on website
 - show error page when clickhouse cannot be reached which explains how to configure metatrace
 - Add AS classification meta
+- Add quoted TTL field
 ---
 
 ```bash
