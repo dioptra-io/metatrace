@@ -13,17 +13,29 @@ jobs:
       - uses: dioptra-io/setup-poetry-action@v1
       - name: Install package
         run: poetry install
-          # - name: Run tests
-          # run: sudo --preserve-env=CI,RIPE_ATLAS_KEY $(poetry env info -p)/bin/pytest --cov=iris --cov-report=xml --log-cli-level=INFO
+      - name: Run tests
+        run: poetry run pytest --cov=metatrace --cov-report=xml --log-cli-level=INFO
       - uses: codecov/codecov-action@v3
 
-  docker:
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dioptra-io/publish-docker-action@v1
-        with:
-          password: ${{ secrets.GITHUB_TOKEN }}
-          platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name == 'push' }}
+# Uncomment when public
+#   docker:
+#     needs: [test]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: dioptra-io/publish-docker-action@v1
+#         with:
+#           password: ${{ secrets.GITHUB_TOKEN }}
+#           platforms: linux/amd64,linux/arm64
+#           push: ${{ github.actor != 'dependabot[bot]' }}
+
+# Set PYPI_PASSWORD and uncomment when public
+#   pypi:
+#     needs: [test]
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: dioptra-io/publish-python-action@v1
+#         with:
+#           password: ${{ secrets.PYPI_PASSWORD }}
+#           upload: ${{ startsWith(github.ref, 'refs/tags/v') }}
