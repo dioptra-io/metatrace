@@ -1,9 +1,12 @@
 # ⚡ MetaTrace
 
+<!-- Uncomment when public
 [![Tests](https://img.shields.io/github/workflow/status/dioptra-io/metatrace/Tests?logo=github)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/dioptra-io/metatrace?logo=codecov&logoColor=white)](https://app.codecov.io/gh/dioptra-io/metatrace)
 [![PyPI](https://img.shields.io/pypi/v/metatrace?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/metatrace/)
+-->
 
+[![Tests](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml/badge.svg)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
 
 ## Quickstart
 
@@ -53,7 +56,30 @@ metatrace METADATA create|delete|get|query
 metatrace server
 ```
 
-## Available metadata
+http://localhost:5555
+
+## Data
+
+Public [CAIDA Ark](https://www.caida.org/projects/ark/) data is supported.
+
+## Metadata
+
+### Autonomous system number
+
+This metadata maps an IP address to its originating AS number, as seen by a BGP collector.
+[RouteViews](http://routeviews.org) and [RIPE RIS](https://www.ripe.net/analyse/internet-measurements/routing-information-service-ris) are supported.
+
+### Geolocation
+
+This metadata maps an IP address to its country, city, latitude and longitude.
+[MaxMind GeoLite2 City](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en) is supported.
+
+### Internet Exchange Point
+
+This metadata maps an IP address to its IXP if it belongs to its peering LAN.
+[PeeringDB](https://www.peeringdb.com) is supported.
+
+TODO: Dataset Kevin?
 
 ---
 TODO:
