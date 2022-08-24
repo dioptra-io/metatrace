@@ -1,4 +1,54 @@
-# metatrace
+# ⚡ MetaTrace
+
+## Quickstart
+
+### Docker
+
+```bash
+# NOTE: The image is currently not published.
+docker run ghcr.io/dioptra-io/metatrace --help
+```
+
+### Python
+
+```bash
+# NOTE: The package is currently not published.
+pip install metatrace
+metatrace --help
+```
+
+### Repository
+
+```bash
+git clone git@github.com:dioptra-io/metatrace.git
+cd metatrace
+poetry install
+poetry run metatrace --help
+```
+
+## Usage
+
+### CLI
+
+#### Data
+
+```bash
+metatrace data create|delete|get|insert|query
+```
+
+#### Metadata
+
+```
+metatrace METADATA create|delete|get|query
+```
+
+### Web
+
+```bash
+metatrace server
+```
+
+## Available metadata
 
 ---
 TODO:
