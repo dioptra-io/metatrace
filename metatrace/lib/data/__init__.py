@@ -66,6 +66,7 @@ def create_data(
             "(SELECT agent_id, probe_dst_addr, traceroute_start, reply_src_addr ORDER BY reply_src_addr)",
         ),
     ]
+    # TODO: ORDER BY metadata, id in projections?
     if asn_dict_name:
         columns += [
             (

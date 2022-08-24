@@ -1,8 +1,11 @@
 import json
 from collections.abc import Sequence
+from json import JSONDecodeError
 
 from pych_client import ClickHouseClient
 from rich.progress import track
+
+from metatrace.lib.logger import logger
 
 
 def make_schema(columns: Sequence[tuple[str, ...]]) -> str:
@@ -95,10 +98,15 @@ def list_tables(client: ClickHouseClient, prefix: str) -> list[dict]:
     FROM system.tables
     WHERE database = {database:String} AND startsWith(name, {prefix:String})
     """
+    tables = []
     rows = client.json(query, {"database": client.config["database"], "prefix": prefix})
     for row in rows:
-        row["info"] = json.loads(row["info"])
-    return rows
+        try:
+            row["info"] = json.loads(row["info"])
+            tables.append(row)
+        except JSONDecodeError:
+            logger.exception("Failed to parse information for table %s", row["name"])
+    return tables
 
 
 def table_exists(client: ClickHouseClient, table: str) -> bool:

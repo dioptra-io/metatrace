@@ -11,6 +11,8 @@ from rich.console import Console
 from rich.progress import DownloadColumn, Progress, TransferSpeedColumn
 from rich.table import Table
 
+from metatrace.lib.logger import logger
+
 
 def download_file(url: str, params: dict, path: Path) -> None:
     with httpx.stream("GET", url, params=params) as response:
@@ -31,23 +33,35 @@ def print_tables(
 ) -> None:
     if quiet:
         for t in tables:
-            console.print(t["info"]["identifier"])
+            try:
+                console.print(t["info"]["identifier"])
+            except KeyError:
+                logger.exception("Failed to print table %s", t["name"])
         return
     table = Table(box=None, header_style="", pad_edge=False)
     # TODO: Additional columns based on info dict
+    # TODO: Directly use table name instead of identifier?
+    # Identifier -> Name
+    # TODO: Get created_at from clickhouse (metadata_modification_time)?
+    # TODO: kube-style CLI: metatrace get --type ... / metatrace delete ... / metatrace resources
     table.add_column("IDENTIFIER")
     table.add_column("CREATED")
     table.add_column("ROWS")
     table.add_column("SIZE")
     for t in tables:
-        created_at = datetime.fromisoformat(t["info"]["created_at"]) - datetime.now()
-        total_bytes = t["total_bytes"] * units.byte
-        table.add_row(
-            t["info"].get("identifier"),
-            format_timedelta(created_at, add_direction=True),
-            str(t["total_rows"]),
-            f"{total_bytes:.2fP#~}",
-        )
+        try:
+            created_at = (
+                datetime.fromisoformat(t["info"]["created_at"]) - datetime.now()
+            )
+            total_bytes = t["total_bytes"] * units.byte
+            table.add_row(
+                t["info"]["identifier"],
+                format_timedelta(created_at, add_direction=True),
+                str(t["total_rows"]),
+                f"{total_bytes:.2fP#~}",
+            )
+        except (KeyError, ValueError):
+            logger.exception("Failed to print table %s", t["name"])
     console.print(table)
 
 
