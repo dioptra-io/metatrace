@@ -8,6 +8,12 @@
 
 [![Tests](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml/badge.svg)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
 
+## Research
+
+- **Evaluation:** https://github.com/dioptra-io/metatrace-evaluation
+- **Paper repository:** https://github.com/kvermeul/metatrace-paper
+- **Paper document:** https://docs.google.com/document/d/1aPFUckHBUkWSdT3y_Jm0r8ItGpCv885Hj797gOP87sM/edit
+
 ## Quickstart
 
 ### Docker
