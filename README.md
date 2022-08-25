@@ -14,6 +14,10 @@
 - **Paper repository:** https://github.com/kvermeul/metatrace-paper
 - **Paper document:** https://docs.google.com/document/d/1aPFUckHBUkWSdT3y_Jm0r8ItGpCv885Hj797gOP87sM/edit
 - **Working document:** https://docs.google.com/document/d/1lPjq4h68D31f7zESqBtkAj1uVhm4FbLYwOvuxltGH50/edit
+- **To release the project:**
+  - [ ] Create a PyPI token and add it to the `PYPI_PASSWORD` repository secret
+  - [ ] Uncomment the `docker` and `pypi` jobs in the [`tests.yml`](.github/workflows/tests.yml) workflow
+  - [ ] Uncomment the badges at the top of [`README.md`](README.md)
 
 ## Quickstart
 
