@@ -61,6 +61,20 @@ metatrace data create|delete|get|insert|query
 metatrace METADATA create|delete|get|query
 ```
 
+For example:
+```bash
+metatrace asn add --collector route-views2.routeviews.org --date 2014-01-01T00:00:00
+metatrace asn get
+# ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃ Identifier        ┃ Collector                   ┃ Date                     ┃ Creation date            ┃ Rows   ┃ Size                  ┃
+# ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━┩
+# │ 202205312208_1f59 │ route-views2.routeviews.org │ Wed Jan  1 00:00:00 2014 │ Tue May 31 22:08:18 2022 │ 498110 │ 3.5454529999999997 MB │
+# └───────────────────┴─────────────────────────────┴──────────────────────────┴──────────────────────────┴────────┴───────────────────────┘
+metatrace asn query 202205312208_1f59 8.8.8.8
+# 15169
+metatrace asn delete 202205312208_1f59
+```
+
 ### Web
 
 ```bash
@@ -71,7 +85,7 @@ http://localhost:5555
 
 ### Python
 
-TODO: Document Python API
+`metatrace.lib`
 
 ## Data
 
@@ -94,63 +108,9 @@ This metadata maps an IP address to its country, city, latitude and longitude.
 This metadata maps an IP address to its IXP if it belongs to its peering LAN.
 [PeeringDB](https://www.peeringdb.com) is supported.
 
-TODO: Dataset Kevin?
-
 ## Authors
 
 MetaTrace is developed and maintained by the [Dioptra group](https://dioptra.io) at [Sorbonne Université](https://www.sorbonne-universite.fr) in Paris, France.
-
----
-TODO:
-- Add local radix-tree loaded from CH (.radix_tree() method on Metadata)
-- Refactor metadata as a single type with (identifier, kind, source, date, creation_date, ...) => metadata tab on website
-- show error page when clickhouse cannot be reached which explains how to configure metatrace
-- Add AS classification meta
-- Add quoted TTL field
-- Document configuration
-- Update queries (look on CH query log)
----
-
-```bash
-poetry install
-poetry shell
-```
-
-```bash
-metatrace metadata asn add --collector route-views2.routeviews.org --date 2014-01-01T00:00:00
-metatrace metadata asn get
-# ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ Identifier              ┃ Collector                   ┃ Date                     ┃ Creation date            ┃ Rows   ┃ Size                  ┃
-# ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━┩
-# │ 202205312208_1f59 │ route-views2.routeviews.org │ Wed Jan  1 00:00:00 2014 │ Tue May 31 22:08:18 2022 │ 498110 │ 3.5454529999999997 MB │
-# └───────────────────┴─────────────────────────────┴──────────────────────────┴──────────────────────────┴────────┴───────────────────────┘
-metatrace metadata asn query 202205312208_1f59 8.8.8.8
-# 15169
-metatrace metadata asn delete 202205312208_1f59
-```
-
-```bash
-metatrace metadata ixp add --source peeringdb
-metatrace metadata ixp get
-# ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━┓
-# ┃ Identifier              ┃ Source    ┃ Creation date            ┃ Rows ┃ Size      ┃
-# ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━┩
-# │ 202205312134_6cf2 │ peeringdb │ Tue May 31 21:34:10 2022 │ 1952 │ 26.848 kB │
-# └───────────────────┴───────────┴──────────────────────────┴──────┴───────────┘
-metatrace metadata ixp query 202205312134_6cf2 2001:7f8:1::1
-# AMS-IX
-metatrace metadata ixp delete 202205312134_6cf2
-```
-
-```bash
-metatrace data create --asn-metadata-identifier 202205312208_1f59 --ixp-metadata-identifier 202205312134_6cf2
-metatrace data get
-# ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━┓
-# ┃ Identifier              ┃ Source ┃ Creation date            ┃ Rows ┃ Size ┃
-# ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━┩
-# │ 202206011116_a93b │ ark    │ Wed Jun  1 11:16:24 2022 │ 0    │ 0 B  │
-# └───────────────────┴────────┴──────────────────────────┴──────┴──────┘
-```
 
 ## Queries
 
