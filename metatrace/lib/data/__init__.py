@@ -156,7 +156,7 @@ def insert_data(
 def _insert_file(config: dict, table: str, url: str) -> None:
     # TODO: Implement streaming in pantrace
     # TODO: Rollback if fails (use tag column + partition on tag + drop partition?)
-    query = "INSERT INTO {table:Identifier} FORMAT JSONEachRow"
+    query = f"INSERT INTO {table} FORMAT JSONEachRow"
     curl = subprocess.Popen(
         ["curl", "--location", "--show-error", "--silent", url], stdout=subprocess.PIPE
     )
@@ -165,8 +165,8 @@ def _insert_file(config: dict, table: str, url: str) -> None:
     )
     pantrace = subprocess.Popen(
         [
-            "/Users/maxmouchet/Clones/github.com/dioptra-io/pantrace/target/release/pantrace",
-            "--from=warts",
+            "pantrace",
+            "--from=warts-trace",
             "--to=internal",
         ],
         stdin=gzip.stdout,

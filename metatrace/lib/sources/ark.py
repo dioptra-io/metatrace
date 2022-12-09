@@ -85,10 +85,10 @@ def ark_probe_data_list(
     with httpx.Client(base_url=base_url) as client:
         for date in time_range:
             path = f"{date:%Y}/cycle-{date:%Y%m%d}/"
-            md5s = ark_get_md5(client, path)
+            # md5s = ark_get_md5(client, path)
             for link in ark_get_links(client, path):
                 if file := ArkTeamProbingFile.from_filename(
-                    link, md5s.get(link), base_url + path + link
+                    link, None, base_url + path + link
                 ):
                     files.append(file)
     return files

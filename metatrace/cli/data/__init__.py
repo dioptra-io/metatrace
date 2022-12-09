@@ -20,15 +20,15 @@ app = typer.Typer()
 @app.command()
 def create(
     ctx: typer.Context,
-    asn_metadata: str = typer.Option(..., metavar="IDENTIFIER"),
-    geo_metadata: str = typer.Option(..., metavar="IDENTIFIER"),
-    ixp_metadata: str = typer.Option(..., metavar="IDENTIFIER"),
+    asn_metadata: Optional[str] = typer.Option(None, metavar="IDENTIFIER"),
+    geo_metadata: Optional[str] = typer.Option(None, metavar="IDENTIFIER"),
+    ixp_metadata: Optional[str] = typer.Option(None, metavar="IDENTIFIER"),
 ) -> None:
     identifier = create_data(
         ctx.obj["client"],
-        ASNMetadata.dict_name(asn_metadata),
-        GeolocationMetadata.dict_name(geo_metadata),
-        IXPMetadata.dict_name(ixp_metadata),
+        ASNMetadata.dict_name(asn_metadata) if asn_metadata else None,
+        GeolocationMetadata.dict_name(geo_metadata) if geo_metadata else None,
+        IXPMetadata.dict_name(ixp_metadata) if ixp_metadata else None,
     )
     typer.echo(identifier)
 
