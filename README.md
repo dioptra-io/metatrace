@@ -1,20 +1,9 @@
 # ⚡ MetaTrace
 
-Uncomment when public
 [![Tests](https://img.shields.io/github/workflow/status/dioptra-io/metatrace/Tests?logo=github)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
-[![Coverage](https://img.shields.io/codecov/c/github/dioptra-io/metatrace?logo=codecov&logoColor=white)](https://app.codecov.io/gh/dioptra-io/metatrace)
 [![PyPI](https://img.shields.io/pypi/v/metatrace?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/metatrace/)
-
-
+[![Coverage](https://img.shields.io/codecov/c/github/dioptra-io/metatrace?logo=codecov&logoColor=white)](https://app.codecov.io/gh/dioptra-io/metatrace)
 [![Tests](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml/badge.svg)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
-
-## Research
-
-- **Evaluation:** https://github.com/dioptra-io/metatrace-evaluation
-- **To release the project:**
-  - [ ] Create a PyPI token and add it to the `PYPI_PASSWORD` repository secret
-  - [ ] Uncomment the `docker` and `pypi` jobs in the [`tests.yml`](.github/workflows/tests.yml) workflow
-  - [ ] Uncomment the badges at the top of [`README.md`](README.md)
 
 ## Quickstart
 
