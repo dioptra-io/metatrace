@@ -1,9 +1,8 @@
 # ⚡ MetaTrace
 
-[![Tests](https://img.shields.io/github/workflow/status/dioptra-io/metatrace/Tests?logo=github)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
-[![PyPI](https://img.shields.io/pypi/v/metatrace?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/metatrace/)
-[![Coverage](https://img.shields.io/codecov/c/github/dioptra-io/metatrace?logo=codecov&logoColor=white)](https://app.codecov.io/gh/dioptra-io/metatrace)
 [![Tests](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml/badge.svg)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/metatrace?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/metatrace/)
+
 
 ## Quickstart
 
