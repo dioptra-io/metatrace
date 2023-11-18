@@ -1,10 +1,10 @@
 # ⚡ MetaTrace
 
-<!-- Uncomment when public
+Uncomment when public
 [![Tests](https://img.shields.io/github/workflow/status/dioptra-io/metatrace/Tests?logo=github)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/dioptra-io/metatrace?logo=codecov&logoColor=white)](https://app.codecov.io/gh/dioptra-io/metatrace)
 [![PyPI](https://img.shields.io/pypi/v/metatrace?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/metatrace/)
--->
+
 
 [![Tests](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml/badge.svg)](https://github.com/dioptra-io/metatrace/actions/workflows/tests.yml)
 
@@ -21,14 +21,12 @@
 ### Docker
 
 ```bash
-# NOTE: The image is currently not published.
 docker run ghcr.io/dioptra-io/metatrace --help
 ```
 
 ### Python
 
 ```bash
-# NOTE: The package is currently not published.
 pip install metatrace
 metatrace --help
 ```
